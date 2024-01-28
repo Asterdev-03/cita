@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { buttonVariants } from "@/components/ui/button";
+import React from "react";
 
-export default function Error404() {
+const Error404: React.FC = () => {
   return (
     <section className="bg-white dark:bg-gray-900 ">
       <div className="container flex items-center min-h-screen px-6 py-12 mx-auto">
@@ -32,6 +33,7 @@ export default function Error404() {
           <div className="flex items-center justify-center w-full mt-6 gap-x-3 shrink-0 sm:w-auto">
             <Link
               href="/"
+              passHref
               className={buttonVariants({
                 size: "lg",
                 variant: "default",
@@ -45,4 +47,6 @@ export default function Error404() {
       </div>
     </section>
   );
-}
+};
+
+export default Error404;
