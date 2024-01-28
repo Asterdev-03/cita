@@ -1,7 +1,8 @@
 import { buttonVariants } from "@/components/ui/button";
 import Link from "next/link";
+import React from "react";
 
-export default function LandingPage() {
+const LandingPage: React.FC = () => {
   return (
     <div>
       <div className="flex flex-col min-h-screen bg-white">
@@ -70,4 +71,6 @@ export default function LandingPage() {
       </div>
     </div>
   );
-}
+};
+
+export default LandingPage;
