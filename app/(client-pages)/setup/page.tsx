@@ -1,10 +1,11 @@
 "use client";
 
 import React, { useState } from "react";
-import { UserOutlined, FileDoneOutlined } from "@ant-design/icons";
 import Link from "next/link";
 import Image from "next/image";
-import { Avatar } from "antd";
+import { StickyNote, BookOpenText, User } from "lucide-react";
+import { Avatar } from "@/components/ui/avatar";
+import { buttonVariants } from "@/components/ui/button";
 
 const Setup: React.FC = () => {
   const [file1, setFile1] = useState<String>("");
@@ -40,22 +41,24 @@ const Setup: React.FC = () => {
           width={110}
           sizes="100vw"
         />
-        <Avatar size={40} icon={<UserOutlined />} />
+        <Avatar className="border-2 h-12 w-12 justify-center items-center">
+          <User />
+        </Avatar>
       </nav>
-      <div className="flex gap-24 mt-12 justify-center">
+      <div className="flex gap-24 mt-10 justify-center">
         <div
-          className={`w-24 h-24 text-4xl text-white shadow-lg ${
+          className={`w-20 h-20 text-4xl text-white shadow-lg ${
             file1 ? "bg-green-700" : "bg-red-700"
           } rounded-full flex text-center items-center justify-center`}
         >
-          <UserOutlined />
+          <StickyNote size={24} />
         </div>
         <div
-          className={`w-24 h-24 text-4xl text-white shadow-lg ${
+          className={`w-20 h-20 text-4xl text-white shadow-lg ${
             file2 ? "bg-green-700" : "bg-red-700"
           } rounded-full flex text-center items-center justify-center`}
         >
-          <FileDoneOutlined />
+          <BookOpenText size={24} />
         </div>
       </div>
       <div className="flex justify-center items-center">
@@ -98,7 +101,7 @@ const Setup: React.FC = () => {
           </div>
         </div>
       </div>
-      <div className="text-justify my-8">
+      <div className="text-justify my-4">
         <h3 className="text-center text-4xl">Preview</h3>
         <div className="grid grid-cols-2 gap-2 m-4">
           <div className="border-solid border-2 p-8 m-2">{file1}</div>
@@ -108,7 +111,11 @@ const Setup: React.FC = () => {
       <div className="flex justify-center">
         <Link
           href="/mock-test"
-          className="bg-green-700 mb-2 text-white px-4 py-2 rounded-md font-bold"
+          className={buttonVariants({
+            size: "lg",
+            variant: "success",
+            className: "mb-20 font-bold",
+          })}
         >
           Get started
         </Link>

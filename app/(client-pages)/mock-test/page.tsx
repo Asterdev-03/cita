@@ -1,25 +1,27 @@
 "use client";
 
-import "regenerator-runtime/runtime";
+import "regenerator-runtime";
 import Image from "next/image";
 import React, { useEffect, useState, useRef } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
-import { Avatar } from "antd";
-
-import {
-  AudioMutedOutlined,
-  AudioOutlined,
-  EyeInvisibleOutlined,
-  EyeOutlined,
-  SendOutlined,
-  UserOutlined,
-} from "@ant-design/icons";
-import { Modal } from "antd";
 
 import Webcam from "react-webcam";
 import { useRouter } from "next/navigation";
+
+import {
+  Camera,
+  CameraOff,
+  Mic,
+  MicOff,
+  SendHorizontal,
+  SquareUserRound,
+  User,
+} from "lucide-react";
+
+import { Modal } from "antd";
+import { Avatar } from "@/components/ui/avatar";
 
 const MockTestPage: React.FC = () => {
   const [voiceStatus, setVoiceStatus] = useState<Boolean>(false);
@@ -127,7 +129,9 @@ const MockTestPage: React.FC = () => {
           width={110}
           sizes="100vw"
         />
-        <Avatar size={40} icon={<UserOutlined />} />
+        <Avatar className="border-2 h-12 w-12 justify-center items-center">
+          <User />
+        </Avatar>
       </nav>
       <div className="flex flex-row p-5 gap-4">
         <div className="w-1/4 p-4 border-2 rounded-2xl bg-zinc-50">
@@ -184,21 +188,35 @@ const MockTestPage: React.FC = () => {
                     style={{ transform: "scaleX(-1)" }}
                   />
                 ) : (
-                  <Avatar size={200} icon={<UserOutlined />} />
+                  <Avatar className="size-max justify-center items-center">
+                    <SquareUserRound
+                      size={200}
+                      strokeWidth={1}
+                      absoluteStrokeWidth
+                    />
+                  </Avatar>
                 )}
               </div>
               <div className="flex items-center justify-center grow gap-x-5">
                 <button
-                  className="bottom-0 bg-red-400 hover:bg-red-500 transition duration-300 h-12 w-12 rounded-full"
+                  className="bottom-0 bg-red-400 hover:bg-red-500 transition duration-300 h-14 w-14 rounded-full flex justify-center items-center"
                   onClick={handleVoice}
                 >
-                  {voiceStatus ? <AudioOutlined /> : <AudioMutedOutlined />}
+                  {voiceStatus ? (
+                    <Mic absoluteStrokeWidth />
+                  ) : (
+                    <MicOff absoluteStrokeWidth />
+                  )}
                 </button>
                 <button
-                  className="bottom-0 bg-blue-400 hover:bg-blue-500 transition duration-300 h-12 w-12 rounded-full"
+                  className="bottom-0 bg-blue-400 hover:bg-blue-500 transition duration-300 h-14 w-14 rounded-full flex justify-center items-center"
                   onClick={handleVideo}
                 >
-                  {videoStatus ? <EyeOutlined /> : <EyeInvisibleOutlined />}
+                  {videoStatus ? (
+                    <Camera absoluteStrokeWidth />
+                  ) : (
+                    <CameraOff absoluteStrokeWidth />
+                  )}
                 </button>
               </div>
             </div>
@@ -208,10 +226,10 @@ const MockTestPage: React.FC = () => {
               {transcript}
             </div>
             <button
-              className="h-11 w-11 justify-self-center self-center bg-zinc-500 hover:bg-zinc-700 transition duration-300 rounded-full text-white"
+              className="h-11 w-11 flex justify-center items-center bg-zinc-500 hover:bg-zinc-700 transition duration-300 rounded-full text-white"
               onClick={handleSend}
             >
-              <SendOutlined />
+              <SendHorizontal absoluteStrokeWidth />
             </button>
           </div>
         </div>
