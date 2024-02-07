@@ -6,10 +6,16 @@ import React, { useEffect, useState, useRef } from "react";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
-
 import Webcam from "react-webcam";
 import { useRouter } from "next/navigation";
-
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import {
   Camera,
   CameraOff,
@@ -19,15 +25,14 @@ import {
   SquareUserRound,
   User,
 } from "lucide-react";
-
-import { Modal } from "antd";
+import { Button, buttonVariants } from "@/components/ui/button";
 import { Avatar } from "@/components/ui/avatar";
+import Link from "next/link";
 
 const MockTestPage: React.FC = () => {
-  const [voiceStatus, setVoiceStatus] = useState<Boolean>(false);
-  const [videoStatus, setVideoStatus] = useState<Boolean>(false);
-  const [isModalOpen, setIsModalOpen] = useState<Boolean>(false);
-  const [videoStream, setVideoStream] = useState<MediaStream | null>(null);
+  const [voiceStatus, setVoiceStatus] = useState<boolean>(false);
+  const [videoStatus, setVideoStatus] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
   const divRef = useRef<HTMLDivElement>(null);
   const { transcript, resetTranscript } = useSpeechRecognition();
@@ -48,7 +53,7 @@ const MockTestPage: React.FC = () => {
 
   const initialTime: number = 10 * 60; // 10 minutes converted to seconds
   const [time, setTime] = useState<number>(initialTime);
-  const [endSession, setEndSession] = useState<Boolean>(false);
+  const [endSession, setEndSession] = useState<boolean>(false);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -234,17 +239,52 @@ const MockTestPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <Modal
-        title={
-          <h2 className="text-2xl font-semibold font-poppins">Session Ended</h2>
-        }
-        open={isModalOpen === true}
+      <Dialog
+        open={isModalOpen}
+        onOpenChange={(vis) => {
+          if (!vis) {
+            setIsModalOpen(vis);
+          }
+        }}
+      >
+        <DialogContent className="w-2/3">
+          <DialogHeader>
+            <DialogTitle>End Session</DialogTitle>
+            <DialogDescription>
+              Do you want to end the session ?
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              onClick={() => setIsModalOpen(false)}
+              className={buttonVariants({
+                size: "lg",
+                variant: "custom1",
+                className: "mt-5 rounded-xl",
+              })}
+            >
+              Cancel
+            </Button>
+            <Link
+              href="/setup"
+              passHref
+              className={buttonVariants({
+                size: "lg",
+                variant: "default",
+                className: "mt-5 rounded-xl",
+              })}
+            >
+              End
+            </Link>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+      {/* <Modal
+        
         onCancel={() => setIsModalOpen(false)}
-        onOk={() => router.push("/setup")}
-        okButtonProps={{ className: "bg-blue-500" }}
-        // footer={null}
-        // width="70vw"
-      ></Modal>
+        
+        
+      ></Modal> */}
     </section>
   );
 };

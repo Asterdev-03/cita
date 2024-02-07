@@ -21,6 +21,9 @@ module.exports = {
         xs: "480px",
       },
       backgroundImage: {},
+      maxWidth: {
+        "8xl": "1408px",
+      },
       colors: {
         border: "hsl(var(--border))",
         input: "hsl(var(--input))",
@@ -77,5 +80,5 @@ module.exports = {
       },
     },
   },
-  plugins: [require("tailwindcss-animate")],
+  plugins: [require("tailwindcss-animate"), require("@tailwindcss/typography")],
 };
