@@ -34,6 +34,10 @@ const MockTestPage: React.FC = () => {
   const [videoStatus, setVideoStatus] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
+  const initialTime: number = 10 * 60; // 10 minutes converted to seconds
+  const [time, setTime] = useState<number>(initialTime);
+  const [endSession, setEndSession] = useState<boolean>(false);
+
   const divRef = useRef<HTMLDivElement>(null);
   const { transcript, resetTranscript } = useSpeechRecognition();
   const webcamRef = useRef<Webcam>(null);
@@ -50,10 +54,6 @@ const MockTestPage: React.FC = () => {
       divRef.current.scrollTop = divRef.current.scrollHeight;
     }
   }, [transcript]); // Assuming transcript is a prop or state that changes
-
-  const initialTime: number = 10 * 60; // 10 minutes converted to seconds
-  const [time, setTime] = useState<number>(initialTime);
-  const [endSession, setEndSession] = useState<boolean>(false);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -98,7 +98,6 @@ const MockTestPage: React.FC = () => {
     setVoiceStatus(false);
     SpeechRecognition.stopListening();
     resetTranscript();
-    setIsModalOpen(true);
   }
 
   function handleSend(): void {
@@ -156,8 +155,8 @@ const MockTestPage: React.FC = () => {
               className={`p-3 ${
                 endSession ? `bg-gray-300` : `bg-red-500 hover:bg-red-400`
               } transition duration-300 text-white rounded-full`}
-              onClick={handleEndSession}
-              disabled={endSession === true}
+              onClick={() => setIsModalOpen(true)}
+              disabled={endSession}
             >
               End Session
             </button>
@@ -241,7 +240,7 @@ const MockTestPage: React.FC = () => {
       </div>
       <Dialog
         open={isModalOpen}
-        onOpenChange={(vis) => {
+        onOpenChange={(vis: boolean) => {
           if (!vis) {
             setIsModalOpen(vis);
           }
@@ -279,12 +278,6 @@ const MockTestPage: React.FC = () => {
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      {/* <Modal
-        
-        onCancel={() => setIsModalOpen(false)}
-        
-        
-      ></Modal> */}
     </section>
   );
 };

@@ -113,7 +113,7 @@ const Setup: React.FC = () => {
           href="/mock-test"
           className={buttonVariants({
             size: "lg",
-            variant: "success",
+            variant: "default",
             className: "mb-20 font-bold",
           })}
         >
