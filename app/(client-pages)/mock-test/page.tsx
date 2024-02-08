@@ -33,10 +33,12 @@ const MockTestPage: React.FC = () => {
   const [voiceStatus, setVoiceStatus] = useState<boolean>(false);
   const [videoStatus, setVideoStatus] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [prompt, setPrompt] = useState<string>("");
 
   const initialTime: number = 10 * 60; // 10 minutes converted to seconds
   const [time, setTime] = useState<number>(initialTime);
-  const [endSession, setEndSession] = useState<boolean>(false);
+  const [startSession, setStartSession] = useState<boolean>(false);
+  const [endSession, setEndSession] = useState<boolean>(true);
 
   const divRef = useRef<HTMLDivElement>(null);
   const { transcript, resetTranscript } = useSpeechRecognition();
@@ -58,7 +60,7 @@ const MockTestPage: React.FC = () => {
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
-    if (!endSession && time > 0) {
+    if (startSession && !endSession && time > 0) {
       timer = setInterval(() => {
         setTime((prevTime) => prevTime - 1);
       }, 1000);
@@ -66,7 +68,22 @@ const MockTestPage: React.FC = () => {
     return () => {
       clearInterval(timer);
     };
-  }, [endSession, time]);
+  }, [startSession, endSession, time]);
+
+  const fetchQuestions = async () => {
+    const p =
+      "generate a single common interview question without any description.";
+    const response = await fetch("/api/questions", {
+      method: "POST",
+      body: JSON.stringify(p),
+    });
+    if (response.status === 500) {
+      throw new Error("Failed to delete");
+    }
+    const res = await response.json();
+    console.log(res);
+    setPrompt(res);
+  };
 
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
@@ -93,11 +110,17 @@ const MockTestPage: React.FC = () => {
   }
 
   function handleEndSession(): void {
-    setEndSession(true);
-    setVideoStatus(false);
-    setVoiceStatus(false);
-    SpeechRecognition.stopListening();
-    resetTranscript();
+    if (startSession) {
+      setVideoStatus(false);
+      setVoiceStatus(false);
+      SpeechRecognition.stopListening();
+      resetTranscript();
+      setIsModalOpen(true);
+    } else {
+      setStartSession(true);
+      setEndSession(false);
+      fetchQuestions();
+    }
   }
 
   function handleSend(): void {
@@ -153,12 +176,11 @@ const MockTestPage: React.FC = () => {
             </div>
             <button
               className={`p-3 ${
-                endSession ? `bg-gray-300` : `bg-red-500 hover:bg-red-400`
+                endSession ? `bg-green-500` : `bg-red-500 hover:bg-red-400`
               } transition duration-300 text-white rounded-full`}
-              onClick={() => setIsModalOpen(true)}
-              disabled={endSession}
+              onClick={handleEndSession}
             >
-              End Session
+              {startSession ? "End Session" : "Start Session"}
             </button>
           </div>
         </div>
@@ -175,10 +197,7 @@ const MockTestPage: React.FC = () => {
               />
 
               <div className="absolute min-h-[50px] h-fit bottom-0 text-center w-full backdrop-blur-md bg-gray-50/50 p-4">
-                <p>
-                  What are your expectations on working at our company in the
-                  long run?
-                </p>
+                <p>{prompt ? prompt : ""}</p>
               </div>
             </div>
             <div className="h-[450px] w-1/3 bg-gray-100 rounded-2xl flex flex-col overflow-hidden">
@@ -255,7 +274,10 @@ const MockTestPage: React.FC = () => {
           </DialogHeader>
           <DialogFooter>
             <Button
-              onClick={() => setIsModalOpen(false)}
+              onClick={() => {
+                setIsModalOpen(false);
+                setEndSession(false);
+              }}
               className={buttonVariants({
                 size: "lg",
                 variant: "custom1",
@@ -264,9 +286,13 @@ const MockTestPage: React.FC = () => {
             >
               Cancel
             </Button>
-            <Link
-              href="/setup"
-              passHref
+            <Button
+              onClick={() => {
+                setIsModalOpen(false);
+                setEndSession(true);
+                setStartSession(false);
+                setTime(initialTime);
+              }}
               className={buttonVariants({
                 size: "lg",
                 variant: "default",
@@ -274,7 +300,7 @@ const MockTestPage: React.FC = () => {
               })}
             >
               End
-            </Link>
+            </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
