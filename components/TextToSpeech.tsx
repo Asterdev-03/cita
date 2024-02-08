@@ -15,16 +15,18 @@ const TextToSpeech: React.FC<TextToSpeechProps> = ({ text }) => {
   const [volume, setVolume] = useState(1);
 
   useEffect(() => {
-    const synth = window.speechSynthesis;
-    const u = new SpeechSynthesisUtterance(text);
-    const voices = synth.getVoices();
+    if (typeof window !== "undefined") {
+      const synth = window.speechSynthesis;
+      const u = new SpeechSynthesisUtterance(text);
+      const voices = synth.getVoices();
 
-    setUtterance(u);
-    setVoice(voices[0]);
+      setUtterance(u);
+      setVoice(voices[0]);
 
-    return () => {
-      synth.cancel();
-    };
+      return () => {
+        synth.cancel();
+      };
+    }
   }, [text]);
 
   const handlePlay = () => {
@@ -78,15 +80,16 @@ const TextToSpeech: React.FC<TextToSpeechProps> = ({ text }) => {
   };
 
   return (
-    <div className="h-64">
+    <div className="h-32">
       <label>
         Voice:
         <select value={voice?.name} onChange={handleVoiceChange}>
-          {window.speechSynthesis.getVoices().map((voice) => (
-            <option key={voice.name} value={voice.name}>
-              {voice.name}
-            </option>
-          ))}
+          {typeof window !== "undefined" &&
+            window.speechSynthesis.getVoices().map((voice) => (
+              <option key={voice.name} value={voice.name}>
+                {voice.name}
+              </option>
+            ))}
         </select>
       </label>
 
