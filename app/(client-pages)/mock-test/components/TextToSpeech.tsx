@@ -1,16 +1,24 @@
 import React, { useState, useEffect } from "react";
 
-interface TextToSpeechProps {
-  text: string;
+export async function playVoice(question: string) {
+  const s = window.speechSynthesis;
+  const u = new SpeechSynthesisUtterance(question);
+  const v = s.getVoices();
+  u.voice = v[0];
+  u.pitch = 0;
+  u.rate = 1;
+  u.volume = 1;
+  s.speak(u);
 }
 
-const TextToSpeech: React.FC<TextToSpeechProps> = ({ text }) => {
+const TextToSpeech: React.FC = () => {
+  const text = "nice to meet you";
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(
     null
   );
   const [voice, setVoice] = useState<SpeechSynthesisVoice | null>(null);
-  const [pitch, setPitch] = useState(1);
+  const [pitch, setPitch] = useState(0);
   const [rate, setRate] = useState(1);
   const [volume, setVolume] = useState(1);
 
@@ -21,7 +29,7 @@ const TextToSpeech: React.FC<TextToSpeechProps> = ({ text }) => {
       const voices = synth.getVoices();
 
       setUtterance(u);
-      setVoice(voices[0]);
+      setVoice(voices[4]);
 
       return () => {
         synth.cancel();

@@ -1,15 +1,8 @@
 "use client";
 
-import TextToSpeech from "@/components/TextToSpeech";
-
-import "regenerator-runtime";
 import Image from "next/image";
 import React, { useEffect, useState, useRef } from "react";
-import SpeechRecognition, {
-  useSpeechRecognition,
-} from "react-speech-recognition";
-import Webcam from "react-webcam";
-import { useRouter } from "next/navigation";
+
 import {
   Dialog,
   DialogContent,
@@ -18,48 +11,25 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import {
-  Camera,
-  CameraOff,
-  Mic,
-  MicOff,
-  SendHorizontal,
-  SquareUserRound,
-  User,
-} from "lucide-react";
+import { SendHorizontal, User } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
+
 import { Avatar } from "@/components/ui/avatar";
-import Link from "next/link";
+import { WebCamera } from "./components/WebCamera";
+import { TalkingAvatar } from "./components/TalkingAvatar";
+import { MicWithTranscript } from "./components/MicWithTranscript";
+import TextToSpeech, { playVoice } from "./components/TextToSpeech";
 
 const MockTestPage: React.FC = () => {
-  const [voiceStatus, setVoiceStatus] = useState<boolean>(false);
-  const [videoStatus, setVideoStatus] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [prompt, setPrompt] = useState<string>(
-    "hello, how are you. thanks for asking. nye"
-  );
+  const [questions, setQuestions] = useState([]);
+  const [index, setIndex] = useState<number>(0);
+  const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
   const initialTime: number = 10 * 60; // 10 minutes converted to seconds
   const [time, setTime] = useState<number>(initialTime);
   const [startSession, setStartSession] = useState<boolean>(false);
   const [endSession, setEndSession] = useState<boolean>(true);
-
-  const divRef = useRef<HTMLDivElement>(null);
-  const { transcript, resetTranscript } = useSpeechRecognition();
-  const webcamRef = useRef<Webcam>(null);
-
-  const router = useRouter();
-
-  useEffect(() => {
-    startVideoStream();
-  }, []);
-
-  useEffect(() => {
-    // Scroll to the bottom when the transcript incresses
-    if (divRef.current) {
-      divRef.current.scrollTop = divRef.current.scrollHeight;
-    }
-  }, [transcript]); // Assuming transcript is a prop or state that changes
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -75,18 +45,15 @@ const MockTestPage: React.FC = () => {
   }, [startSession, endSession, time]);
 
   const fetchQuestions = async () => {
-    const p =
-      "generate a single common interview question without any description.";
     const response = await fetch("/api/questions", {
-      method: "POST",
-      body: JSON.stringify(p),
+      method: "GET",
     });
     if (response.status === 500) {
       throw new Error("Failed to delete");
     }
     const res = await response.json();
-    console.log(res);
-    setPrompt(res);
+    setQuestions(res);
+    playVoice(res[index]);
   };
 
   const formatTime = (seconds: number): string => {
@@ -97,62 +64,45 @@ const MockTestPage: React.FC = () => {
     return `${formattedMinutes}:${formattedSeconds}`;
   };
 
-  async function startVideoStream(): Promise<void> {
-    if (
-      webcamRef.current &&
-      webcamRef.current.video &&
-      webcamRef.current.video.readyState === 4
-    ) {
-      const video = webcamRef.current.video;
-      const videoWidth = webcamRef.current.video.videoWidth;
-      const videoHeight = webcamRef.current.video.videoHeight;
-
-      // Set video to be displayed based on the actual width and height of the direct video from camera
-      webcamRef.current.video.width = videoWidth;
-      webcamRef.current.video.height = videoHeight;
-    }
-  }
-
-  function handleEndSession(): void {
+  function handleSessionChange(): void {
     if (startSession) {
-      setVideoStatus(false);
-      setVoiceStatus(false);
-      SpeechRecognition.stopListening();
-      resetTranscript();
+      // setVideoStatus(false);
+      // setVoiceStatus(false);
+      // SpeechRecognition.stopListening();
+      // resetTranscript();
       setIsModalOpen(true);
     } else {
       setStartSession(true);
       setEndSession(false);
-      // fetchQuestions();
+      fetchQuestions();
     }
   }
 
-  function handleSend(): void {
-    SpeechRecognition.stopListening();
-    resetTranscript();
-    setVoiceStatus(false);
+  function onEndSession() {
+    setIsModalOpen(false);
+    setEndSession(true);
+    setStartSession(false);
+    setTime(initialTime);
+    setQuestions([]);
+    setIndex(0);
   }
 
-  function handleVoice(): void {
-    if (!voiceStatus) {
-      setVoiceStatus(true);
-      SpeechRecognition.startListening({
-        continuous: true,
-        language: "en-IN",
-      });
+  async function handleSend() {
+    if (index < questions.length - 1) {
+      playVoice(questions[index + 1]);
+      setIndex(index + 1);
     } else {
-      setVoiceStatus(false);
-      SpeechRecognition.stopListening();
+      onEndSession();
     }
-  }
 
-  function handleVideo(): void {
-    setVideoStatus((prevVideoStatus) => !prevVideoStatus);
+    // SpeechRecognition.stopListening();
+    // resetTranscript();
+    // setVoiceStatus(false);
   }
 
   return (
     <section className="min-h-screen bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-100">
-      <TextToSpeech text={prompt} />
+      <TextToSpeech />
       <nav className="p-3 flex justify-between items-center bg-white/70 border-b-3 border-gray-200 shadow-md">
         <Image
           src="/images/fulllogo.png"
@@ -183,7 +133,7 @@ const MockTestPage: React.FC = () => {
               className={`p-3 ${
                 endSession ? `bg-green-500` : `bg-red-500 hover:bg-red-400`
               } transition duration-300 text-white rounded-full`}
-              onClick={handleEndSession}
+              onClick={handleSessionChange}
             >
               {startSession ? "End Session" : "Start Session"}
             </button>
@@ -192,73 +142,30 @@ const MockTestPage: React.FC = () => {
         <div className="flex flex-col w-full border-2 rounded-2xl bg-white p-4 gap-y-2">
           <div className="flex gap-x-2">
             <div className="relative h-[450px] w-2/3 bg-gray-100 rounded-2xl overflow-hidden">
-              <Image
-                src="/images/avatar.png"
-                alt="avatar"
-                fill
-                priority
-                sizes="100vw"
-                className="object-cover"
-              />
-
+              <TalkingAvatar />
               <div className="absolute min-h-[50px] h-fit bottom-0 text-center w-full backdrop-blur-md bg-gray-50/50 p-4">
-                <p>{prompt ? prompt : ""}</p>
+                <p>{questions ? questions[index] : ""}</p>
               </div>
             </div>
             <div className="h-[450px] w-1/3 bg-gray-100 rounded-2xl flex flex-col overflow-hidden">
               <div className="relative h-4/5 flex items-center justify-center">
-                {videoStatus ? (
-                  <Webcam
-                    ref={webcamRef}
-                    muted={true}
-                    audio={false}
-                    className="h-full w-full overflow-hidden object-cover"
-                    style={{ transform: "scaleX(-1)" }}
-                  />
-                ) : (
-                  <Avatar className="size-max justify-center items-center">
-                    <SquareUserRound
-                      size={200}
-                      strokeWidth={1}
-                      absoluteStrokeWidth
-                    />
-                  </Avatar>
-                )}
+                <WebCamera />
               </div>
-              <div className="flex items-center justify-center grow gap-x-5">
-                <button
-                  className="bottom-0 bg-red-400 hover:bg-red-500 transition duration-300 h-14 w-14 rounded-full flex justify-center items-center"
-                  onClick={handleVoice}
-                >
-                  {voiceStatus ? (
-                    <Mic absoluteStrokeWidth />
-                  ) : (
-                    <MicOff absoluteStrokeWidth />
-                  )}
-                </button>
-                <button
-                  className="bottom-0 bg-blue-400 hover:bg-blue-500 transition duration-300 h-14 w-14 rounded-full flex justify-center items-center"
-                  onClick={handleVideo}
-                >
-                  {videoStatus ? (
-                    <Camera absoluteStrokeWidth />
-                  ) : (
-                    <CameraOff absoluteStrokeWidth />
-                  )}
-                </button>
-              </div>
+              <div className="flex items-center justify-center grow gap-x-5"></div>
             </div>
           </div>
-          <div className="w-full h-20 border-2 bg-gray-50 rounded-3xl p-3 overflow-y-hidden grid grid-cols-12">
-            <div className="col-span-11 overflow-y-auto" ref={divRef}>
-              {transcript}
+          <div className="grid grid-cols-12 gap-x-2">
+            <div className="col-span-11 w-full">
+              <MicWithTranscript isDisabled={isDisabled} />
             </div>
-            <button
-              className="h-11 w-11 flex justify-center items-center bg-zinc-500 hover:bg-zinc-700 transition duration-300 rounded-full text-white"
-              onClick={handleSend}
-            >
-              <SendHorizontal absoluteStrokeWidth />
-            </button>
+            <div className="flex col-span-1s justify-center items-center">
+              <button
+                className="h-11 w-11 flex justify-center items-center bg-zinc-500 hover:bg-zinc-700 transition duration-300 rounded-full text-white"
+                onClick={handleSend}
+              >
+                <SendHorizontal absoluteStrokeWidth />
+              </button>
+            </div>
           </div>
         </div>
       </div>
@@ -292,12 +199,7 @@ const MockTestPage: React.FC = () => {
               Cancel
             </Button>
             <Button
-              onClick={() => {
-                setIsModalOpen(false);
-                setEndSession(true);
-                setStartSession(false);
-                setTime(initialTime);
-              }}
+              onClick={onEndSession}
               className={buttonVariants({
                 size: "lg",
                 variant: "default",
