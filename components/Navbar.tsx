@@ -12,20 +12,18 @@ export default function Navbar() {
         <div className="flex h-16 items-center justify-between">
           <Link
             href="/"
-            className="flex items-center font-semibold text-xl select-none xs:space-x-2 space-x-1"
+            className="flex items-center font-semibold text-2xl select-none xs:space-x-2 space-x-0.5"
           >
             <Image
               alt="logo"
               src="/images/logo.png"
-              width={33}
-              height={33}
+              width={30}
+              height={30}
               quality={100}
               priority
               className="w-auto h-auto"
             />
-            <span className={`${opensans.className} text-[#f658ee] text-2xl`}>
-              C
-            </span>
+
             <span className={`${pacifico.className} text-[#5a338a]`}>I</span>
             <span className={`${opensans.className} text-[#f658ee] text-2xl`}>
               T
