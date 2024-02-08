@@ -1,5 +1,7 @@
 "use client";
 
+import TextToSpeech from "@/components/TextToSpeech";
+
 import "regenerator-runtime";
 import Image from "next/image";
 import React, { useEffect, useState, useRef } from "react";
@@ -33,7 +35,9 @@ const MockTestPage: React.FC = () => {
   const [voiceStatus, setVoiceStatus] = useState<boolean>(false);
   const [videoStatus, setVideoStatus] = useState<boolean>(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [prompt, setPrompt] = useState<string>("");
+  const [prompt, setPrompt] = useState<string>(
+    "hello, how are you. thanks for asking. nye"
+  );
 
   const initialTime: number = 10 * 60; // 10 minutes converted to seconds
   const [time, setTime] = useState<number>(initialTime);
@@ -119,7 +123,7 @@ const MockTestPage: React.FC = () => {
     } else {
       setStartSession(true);
       setEndSession(false);
-      fetchQuestions();
+      // fetchQuestions();
     }
   }
 
@@ -148,6 +152,7 @@ const MockTestPage: React.FC = () => {
 
   return (
     <section className="min-h-screen bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-100">
+      <TextToSpeech text={prompt} />
       <nav className="p-3 flex justify-between items-center bg-white/70 border-b-3 border-gray-200 shadow-md">
         <Image
           src="/images/fulllogo.png"
