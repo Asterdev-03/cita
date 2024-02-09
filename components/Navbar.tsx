@@ -23,7 +23,6 @@ export default function Navbar() {
               priority
               className="w-auto h-auto"
             />
-
             <span className={`${pacifico.className} text-[#5a338a]`}>I</span>
             <span className={`${opensans.className} text-[#f658ee] text-2xl`}>
               T

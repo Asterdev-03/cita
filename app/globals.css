@@ -51,11 +51,10 @@
   }
 }
 
-@layer base {
-  * {
-    @apply border-border;
-  }
-  body {
-    @apply bg-background text-foreground;
-  }
+.pattern1 {
+  background-color: white;
+  opacity: 0.8;
+  background-image: radial-gradient(#444cf7 0.5px, white 0.5px);
+  background-size: 10px 10px;
+  width: fit-content;
 }

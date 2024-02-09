@@ -1,8 +1,8 @@
 "use client";
 
 import Image from "next/image";
-import React, { useEffect, useState, useRef } from "react";
-
+import React, { useEffect, useState } from "react";
+import { inter } from "@/lib/fonts";
 import {
   Dialog,
   DialogContent,
@@ -11,10 +11,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { SendHorizontal, User } from "lucide-react";
+import { SendHorizontal } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
-
-import { Avatar } from "@/components/ui/avatar";
 import { WebCamera } from "./components/WebCamera";
 import { TalkingAvatar } from "./components/TalkingAvatar";
 import { MicWithTranscript } from "./components/MicWithTranscript";
@@ -101,20 +99,10 @@ const MockTestPage: React.FC = () => {
   }
 
   return (
-    <section className="min-h-screen bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-100">
+    <section
+      className={`${inter.className} min-h-screen bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-100`}
+    >
       <TextToSpeech />
-      <nav className="p-3 flex justify-between items-center bg-white/70 border-b-3 border-gray-200 shadow-md">
-        <Image
-          src="/images/fulllogo.png"
-          alt="logo"
-          height={60}
-          width={110}
-          sizes="100vw"
-        />
-        <Avatar className="border-2 h-12 w-12 justify-center items-center">
-          <User />
-        </Avatar>
-      </nav>
       <div className="flex flex-row p-5 gap-4">
         <div className="w-1/4 p-4 border-2 rounded-2xl bg-zinc-50">
           <div className="grid grid-cols-1 h-full">
