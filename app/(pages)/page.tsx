@@ -33,7 +33,7 @@ const LandingPage: React.FC = () => {
         {/* title */}
         <MaxWidthWrapper className="max-w-6xl px-4 mt-20 sm:mt-36 mb-12">
           <div className="flex flex-col items-center justify-center text-center">
-            <h2 className="max-w-4xl text-5xl md:text-6xl lg:text-7xl font-bold leading-[60px]">
+            <h2 className="max-w-4xl text-5xl md:text-6xl lg:text-7xl font-bold leading-[60px] md:leading-[65px] lg:leading-[90px]">
               Meet your new {""}
               <span className="text-pink-500">interview assistant</span> and do
               mock preps right away!!
@@ -59,18 +59,55 @@ const LandingPage: React.FC = () => {
 
       {/* HERO SECTION - 2*/}
 
-      <MaxWidthWrapper className="max-w-6xl px-4 mt-20 sm:mt-36 mb-12">
-        <div className="pattern1 p-4">
-          <Image
-            src="/images/upload.png"
-            alt="product preview"
-            width={100}
-            height={100}
-            sizes="100vw"
-            quality={100}
-            priority
-            className="p-2 sm:p-8 md:p-20 bg-white shadow-2xl rounded-md ring-1 ring-gray-900/10"
-          />
+      <MaxWidthWrapper className="max-w-6xl px-4 mt-20 sm:mt-32 mb-12">
+        <div className="pattern1 p-6 w-full flex flex-col items-center space-y-20">
+          <div className="w-full flex items-center justify-center gap-20">
+            <Image
+              src="/images/create.png"
+              alt="product preview"
+              width={254}
+              height={265}
+              sizes="100vw"
+              quality={100}
+              priority
+              className="shadow-2xl rounded-3xl ring-4 ring-offset-8 ring-zinc-200/90"
+            />
+            <h2 className="text-[70px] text-gray-900 font-black">
+              Prepare your resume
+            </h2>
+          </div>
+
+          <div className="w-full flex items-center justify-center gap-20">
+            <Image
+              src="/images/upload.png"
+              alt="product preview"
+              width={254}
+              height={265}
+              sizes="100vw"
+              quality={100}
+              priority
+              className="shadow-2xl rounded-3xl ring-4 ring-offset-8 ring-zinc-200/90"
+            />
+            <h2 className="text-[70px] text-gray-900 font-black">
+              Just give you job description and resume to CITA
+            </h2>
+          </div>
+
+          <div className="w-full flex items-center justify-center gap-20">
+            <Image
+              src="/images/interview.png"
+              alt="product preview"
+              width={254}
+              height={265}
+              sizes="100vw"
+              quality={100}
+              priority
+              className="shadow-2xl rounded-3xl ring-4 ring-offset-8 ring-zinc-200/90"
+            />
+            <h2 className="text-[70px] text-gray-900 font-black">
+              Shine your Interview
+            </h2>
+          </div>
         </div>
       </MaxWidthWrapper>
     </section>

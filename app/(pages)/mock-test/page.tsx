@@ -1,7 +1,7 @@
 "use client";
 
-import Image from "next/image";
 import React, { useEffect, useState } from "react";
+// import { Metadata } from "next";
 import { inter } from "@/lib/fonts";
 import {
   Dialog,
@@ -17,6 +17,10 @@ import { WebCamera } from "./components/WebCamera";
 import { TalkingAvatar } from "./components/TalkingAvatar";
 import { MicWithTranscript } from "./components/MicWithTranscript";
 import TextToSpeech, { playVoice } from "./components/TextToSpeech";
+
+// export const metadata: Metadata = {
+//   title: "Mock Test",
+// };
 
 const MockTestPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);

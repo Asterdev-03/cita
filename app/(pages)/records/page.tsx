@@ -2,19 +2,17 @@
 
 import React, { useState } from "react";
 // import { Metadata } from "next";
-import Link from "next/link";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
-import { Button, buttonVariants } from "@/components/ui/button";
+import { Button } from "@/components/ui/button";
 import { inter } from "@/lib/fonts";
 import { Ghost, Loader2, Plus, Trash } from "lucide-react";
 import Skeleton from "react-loading-skeleton";
 import { format } from "date-fns";
-import { Calendar } from "@/components/ui/calendar";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
-import DetailsDrawer from "./components/DetailsDrawer";
+import DetailsDrawer from "../dashboard/components/DetailsDrawer";
 
 // export const metadata: Metadata = {
-//   title: "Home",
+//   title: "Records",
 // };
 
 const DashboardPage: React.FC = () => {
@@ -22,9 +20,9 @@ const DashboardPage: React.FC = () => {
     null
   );
 
-  // TODO: Delete api request for files
+  // TODO: Delete request for files
 
-  // Dummy data
+  // Dummy files
   const files = [
     {
       id: "123",
@@ -65,20 +63,18 @@ const DashboardPage: React.FC = () => {
 
   const displayFiles = () => {
     return (
-      <ul className="my-2 p-3 grid gap-6 grid-cols-2 lg:grid-cols-3 border-2 shadow-lg rounded-lg">
+      <ul className="my-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
         {files!
           .sort(
             (a, b) =>
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
           )
-          .slice(0, 3)
           .map((file) => (
             <li
               key={file.id}
-              className="flex flex-col divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg border border-1 border-gray-100"
+              className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg border border-1 border-gray-100"
             >
               <DetailsDrawer file={file} />
-
               <div className="px-6 mt-4 grid grid-cols-2 place-items-center py-2 gap-6 text-xs text-zinc-500">
                 <div className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
@@ -100,16 +96,6 @@ const DashboardPage: React.FC = () => {
               </div>
             </li>
           ))}
-
-        <Link
-          className={`${buttonVariants({
-            size: "sm",
-            variant: "ghost",
-          })} place-self-center lg:place-self-start`}
-          href="/records"
-        >
-          See all...
-        </Link>
       </ul>
     );
   };
@@ -138,72 +124,19 @@ const DashboardPage: React.FC = () => {
     <section className={`${inter.className}`}>
       <MaxWidthWrapper>
         <BreadcrumbNav />
-        <div className="my-8 grid grid-cols-1 lg:grid-cols-3 gap-8">
-          <div className="lg:col-span-2">
-            <div className="flex flex-col items-start justify-between gap-4 border-b border-gray-200 pb-5 xs:flex-row xs:items-center sm:gap-0">
-              <h2 className="mb-3 font-semibold text-gray-900 leading-loose">
-                Good morning, welcome to <br />
-                <span className="text-3xl font-bold">My Dashboard</span>
-              </h2>
-              <Link
-                href="/setup"
-                className={buttonVariants({
-                  size: "lg",
-                  variant: "default",
-                })}
-                style={{ borderRadius: "40px" }}
-              >
-                Start practicing
-              </Link>
-            </div>
-
-            {/* Display all user history */}
-            <h2 className="my-6 font-semibold text-gray-900 text-lg">
-              History
-            </h2>
-            {files && files?.length !== 0
-              ? displayFiles()
-              : // : isLoading
-                // ? displayLoading()
-                displayEmpty()}
-          </div>
-
-          {/* This calender renders in large and small screen */}
-          <div className="hidden lg:block max-sm:block place-self-center lg:place-self-end">
-            <Calendar
-              mode="single"
-              className="rounded-md border"
-              numberOfMonths={1}
-              styles={{
-                caption: { color: "purple" },
-              }}
-            />
-          </div>
-
-          {/* This calender renders in medium screen */}
-          <div className="hidden lg:hidden sm:block place-self-center lg:place-self-end">
-            <Calendar
-              mode="single"
-              className="rounded-md border"
-              numberOfMonths={2}
-              styles={{
-                caption: { color: "purple" },
-              }}
-            />
-          </div>
-
-          {/* Overview charts */}
-          <div className="lg:col-span-2">
-            <h2 className="my-6 font-semibold text-gray-900 text-lg">
-              Overview
-            </h2>
-            {files && files?.length !== 0
-              ? displayFiles()
-              : // : isLoading
-                // ? displayLoading()
-                displayEmpty()}
-          </div>
+        <div className="mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-200 pb-5 xs:flex-row xs:items-center sm:gap-0">
+          <h2 className="mb-3 font-semibold text-gray-900 leading-loose">
+            All my previous <br />
+            <span className="text-3xl font-bold">Records</span>
+          </h2>
         </div>
+
+        {/* Display all user history */}
+        {files && files?.length !== 0
+          ? displayFiles()
+          : // : isLoading
+            // ? displayLoading()
+            displayEmpty()}
       </MaxWidthWrapper>
     </section>
   );

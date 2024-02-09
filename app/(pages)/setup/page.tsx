@@ -1,12 +1,17 @@
 "use client";
 
 import React, { useState } from "react";
+// import { Metadata } from "next";
 import Link from "next/link";
-import Image from "next/image";
 import { inter } from "@/lib/fonts";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { StickyNote, BookOpenText } from "lucide-react";
 import { buttonVariants } from "@/components/ui/button";
+import BreadcrumbNav from "@/components/BreadcrumbNav";
+
+// export const metadata: Metadata = {
+//   title: "Setup",
+// };
 
 const SetupPage: React.FC = () => {
   const [file1, setFile1] = useState<String>("");
@@ -35,9 +40,11 @@ const SetupPage: React.FC = () => {
   return (
     <section className={`${inter.className}`}>
       <MaxWidthWrapper>
+        <BreadcrumbNav />
         <div className="mt-8 flex flex-col items-start justify-between gap-4 border-b border-gray-200 pb-5 xs:flex-row xs:items-center sm:gap-0">
-          <h2 className="mb-3 font-bold text-3xl text-gray-900">
-            Getting ready
+          <h2 className="mb-3 font-semibold text-gray-900 leading-loose">
+            Getting ready to <br />
+            <span className="text-3xl font-bold">Setup Mock interview</span>
           </h2>
         </div>
 
@@ -60,7 +67,7 @@ const SetupPage: React.FC = () => {
         <div className="flex justify-center items-center">
           <div
             x-ref="dnd"
-            className="relative w-3/4 flex flex-col text-gray-400 border-dotted border-2 border-gray-500 p-4 m-4 rounded cursor-pointer"
+            className="relative w-3/4 flex flex-col text-gray-400 border-dotted border-2 border-gray-500 p-4 m-4 rounded-2xl cursor-pointer"
           >
             <input
               accept=".txt"
@@ -90,7 +97,7 @@ const SetupPage: React.FC = () => {
                   ? "Upload your resume to get started"
                   : "Upload the job description to get started"}
               </h1>
-              <p className="text-2xl font-bold mb-2 p-1 bg-none border-2 border-gray-500 ">
+              <p className="text-2xl font-bold mb-2 p-1 bg-none">
                 {flag ? "Upload your resume" : "Upload your job description"}
               </p>
               <p>as .txt</p>
@@ -100,8 +107,12 @@ const SetupPage: React.FC = () => {
         <div className="text-justify my-4">
           <h3 className="text-center text-4xl">Preview</h3>
           <div className="grid grid-cols-2 gap-2 m-4">
-            <div className="border-solid border-2 p-8 m-2">{file1}</div>
-            <div className="border-solid border-2 p-8 m-2">{file2}</div>
+            <div className="border-solid border-2 rounded-2xl p-8 m-2">
+              {file1}
+            </div>
+            <div className="border-solid border-2 rounded-2xl p-8 m-2">
+              {file2}
+            </div>
           </div>
         </div>
         <div className="flex justify-center">
