@@ -4,7 +4,7 @@ export async function playVoice(question: string) {
   const s = window.speechSynthesis;
   const u = new SpeechSynthesisUtterance(question);
   const v = s.getVoices();
-  u.voice = v[0];
+  u.voice = v[2];
   u.pitch = 0;
   u.rate = 1;
   u.volume = 1;
