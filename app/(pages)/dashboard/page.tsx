@@ -12,6 +12,7 @@ import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
 import DetailsDrawer from "./components/DetailsDrawer";
+import BarChart from "./components/BarChart";
 
 // export const metadata: Metadata = {
 //   title: "Home",
@@ -157,15 +158,11 @@ const DashboardPage: React.FC = () => {
               </Link>
             </div>
 
-            {/* Display all user history */}
+            {/* Charts */}
             <h2 className="my-6 font-semibold text-gray-900 text-lg">
-              History
+              Overview
             </h2>
-            {files && files?.length !== 0
-              ? displayFiles()
-              : // : isLoading
-                // ? displayLoading()
-                displayEmpty()}
+            <BarChart />
           </div>
 
           {/* This calender renders in large and small screen */}
@@ -192,10 +189,10 @@ const DashboardPage: React.FC = () => {
             />
           </div>
 
-          {/* Overview charts */}
+          {/* History */}
           <div className="lg:col-span-2">
             <h2 className="my-6 font-semibold text-gray-900 text-lg">
-              Overview
+              History
             </h2>
             {files && files?.length !== 0
               ? displayFiles()
