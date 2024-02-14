@@ -2,6 +2,15 @@
 @import "tailwindcss/components";
 @import "tailwindcss/utilities";
 
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+  scroll-behavior: smooth;
+  /* outline: 1px solid rgb(255, 53, 53) !important; */
+  /* background: rgb(0 100 0 / 0.1); */
+}
+
 @layer base {
   :root {
     --background: 0 0% 100%;
@@ -55,4 +64,14 @@
   opacity: 0.8;
   background-image: radial-gradient(#444cf7 0.5px, white 0.5px);
   background-size: 10px 10px;
+  animation-name: animation;
+  animation-duration: 8s;
+  animation-iteration-count: infinite;
+  position: relative;
+}
+
+@keyframes animation {
+  50% {
+    transform: translateY(40px);
+  }
 }
