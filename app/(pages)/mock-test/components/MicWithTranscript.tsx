@@ -7,30 +7,22 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 
-interface MicWithTranscript {
-  isDisabled: boolean;
-}
-
-export const MicWithTranscript: React.FC<MicWithTranscript> = ({
-  isDisabled,
-}) => {
+export const MicWithTranscript: React.FC = () => {
   const [voiceStatus, setVoiceStatus] = useState<boolean>(false);
 
   const divRef = useRef<HTMLDivElement>(null);
   const { transcript, resetTranscript } = useSpeechRecognition();
 
   function handleVoice(): void {
-    if (!isDisabled) {
-      if (!voiceStatus) {
-        setVoiceStatus(true);
-        SpeechRecognition.startListening({
-          continuous: true,
-          language: "en-IN",
-        });
-      } else {
-        setVoiceStatus(false);
-        SpeechRecognition.stopListening();
-      }
+    if (!voiceStatus) {
+      setVoiceStatus(true);
+      SpeechRecognition.startListening({
+        continuous: true,
+        language: "en-IN",
+      });
+    } else {
+      setVoiceStatus(false);
+      SpeechRecognition.stopListening();
     }
   }
 
@@ -65,7 +57,6 @@ export const MicWithTranscript: React.FC<MicWithTranscript> = ({
         </button>
         <button
           className="h-11 w-11 flex justify-center items-center bg-zinc-500 hover:bg-zinc-700 transition duration-300 rounded-full text-white"
-          disabled={isDisabled}
           onClick={handleClear}
         >
           <MessageCircleOff />

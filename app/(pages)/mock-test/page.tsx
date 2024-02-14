@@ -14,7 +14,7 @@ import {
 import { SendHorizontal } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { WebCamera } from "./components/WebCamera";
-import { TalkingAvatar } from "./components/TalkingAvatar";
+import TalkingAvatar from "./components/TalkingAvatar";
 import { MicWithTranscript } from "./components/MicWithTranscript";
 import TextToSpeech, { playVoice } from "./components/TextToSpeech";
 
@@ -26,12 +26,13 @@ const MockTestPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [questions, setQuestions] = useState([]);
   const [index, setIndex] = useState<number>(0);
-  const [isDisabled, setIsDisabled] = useState<boolean>(false);
 
   const initialTime: number = 10 * 60; // 10 minutes converted to seconds
   const [time, setTime] = useState<number>(initialTime);
   const [startSession, setStartSession] = useState<boolean>(false);
   const [endSession, setEndSession] = useState<boolean>(true);
+
+  const [isListeningDisabled, setIsListeningDisabled] = useState<boolean>(true);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -55,7 +56,12 @@ const MockTestPage: React.FC = () => {
     }
     const res = await response.json();
     setQuestions(res);
-    playVoice(res[index]);
+    setIsListeningDisabled(false);
+    playVoice(res[index], () => {
+      console.log("stop");
+      setIsListeningDisabled(true); // Set isPlaying to false after speech synthesis is done
+      console.log(isListeningDisabled); // Set isPlaying to false after speech synthesis is done
+    });
   };
 
   const formatTime = (seconds: number): string => {
@@ -91,7 +97,12 @@ const MockTestPage: React.FC = () => {
 
   async function handleSend() {
     if (index < questions.length - 1) {
-      playVoice(questions[index + 1]);
+      setIsListeningDisabled(false);
+      playVoice(questions[index + 1], () => {
+        console.log("stop");
+        setIsListeningDisabled(true); // Set isPlaying to false after speech synthesis is done
+        setIsListeningDisabled(true); // Set isPlaying to false after speech synthesis is done
+      });
       setIndex(index + 1);
     } else {
       onEndSession();
@@ -106,7 +117,7 @@ const MockTestPage: React.FC = () => {
     <section
       className={`${inter.className} min-h-screen bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-100`}
     >
-      <TextToSpeech />
+      {/* <TextToSpeech /> */}
       <div className="flex flex-row p-5 gap-4">
         <div className="w-1/4 p-4 border-2 rounded-2xl bg-zinc-50">
           <div className="grid grid-cols-1 h-full">
@@ -134,7 +145,7 @@ const MockTestPage: React.FC = () => {
         <div className="flex flex-col w-full border-2 rounded-2xl bg-white p-4 gap-y-2">
           <div className="flex gap-x-2">
             <div className="relative h-[450px] w-2/3 bg-gray-100 rounded-2xl overflow-hidden">
-              <TalkingAvatar />
+              <TalkingAvatar isDisabled={isListeningDisabled} />
               <div className="absolute min-h-[50px] h-fit bottom-0 text-center w-full backdrop-blur-md bg-gray-50/50 p-4">
                 <p>{questions ? questions[index] : ""}</p>
               </div>
@@ -148,7 +159,7 @@ const MockTestPage: React.FC = () => {
           </div>
           <div className="grid grid-cols-12 gap-x-2">
             <div className="col-span-11 w-full">
-              <MicWithTranscript isDisabled={isDisabled} />
+              <MicWithTranscript />
             </div>
             <div className="flex col-span-1s justify-center items-center">
               <button

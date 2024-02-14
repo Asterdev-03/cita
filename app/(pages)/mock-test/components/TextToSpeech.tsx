@@ -1,18 +1,24 @@
+"use client";
+
 import React, { useState, useEffect } from "react";
 
-export async function playVoice(question: string) {
-  const s = window.speechSynthesis;
-  const u = new SpeechSynthesisUtterance(question);
-  const v = s.getVoices();
-  u.voice = v[2];
-  u.pitch = 0;
-  u.rate = 1;
-  u.volume = 1;
-  s.speak(u);
+export async function playVoice(question: string, callback: () => void) {
+  const synth = window.speechSynthesis;
+  const utterance = new SpeechSynthesisUtterance(question);
+  const voicesList = synth.getVoices();
+  utterance.voice = voicesList[3];
+  utterance.pitch = 0;
+  utterance.rate = 1;
+  utterance.volume = 1;
+
+  utterance.onend = () => {
+    callback(); // Call the callback function to set isPlaying to false
+  };
+  synth.speak(utterance);
 }
 
 const TextToSpeech: React.FC = () => {
-  const text = "nice to meet you";
+  const text = "What are your proudest professional accomplishments?";
   const [isPaused, setIsPaused] = useState<boolean>(false);
   const [utterance, setUtterance] = useState<SpeechSynthesisUtterance | null>(
     null
