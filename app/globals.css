@@ -64,14 +64,14 @@
   opacity: 0.8;
   background-image: radial-gradient(#444cf7 0.5px, white 0.5px);
   background-size: 10px 10px;
-  animation-name: animation;
+  /* animation-name: animation;
   animation-duration: 8s;
-  animation-iteration-count: infinite;
-  position: relative;
+  animation-iteration-count: infinite; 
+  position: relative; */
 }
 
-@keyframes animation {
+/* @keyframes animation {
   50% {
     transform: translateY(40px);
   }
-}
+} */

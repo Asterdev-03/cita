@@ -35,7 +35,7 @@ const LandingPage: React.FC = () => {
           <div className="flex flex-col items-center justify-center text-center">
             <h2 className="max-w-4xl text-5xl md:text-6xl lg:text-7xl font-bold leading-[60px] md:leading-[65px] lg:leading-[90px]">
               Meet your new {""}
-              <span className="bg-gradient-to-r from-fuchsia-600 to-purple-600 bg-clip-text text-transparent">
+              <span className="bg-gradient-to-r from-fuchsia-700 to-purple-600 bg-clip-text text-transparent">
                 interview assistant
               </span>{" "}
               and do mock preps right away!!
@@ -50,7 +50,7 @@ const LandingPage: React.FC = () => {
               className={buttonVariants({
                 size: "lg",
                 variant: "default",
-                className: "mt-16 rounded-xl",
+                className: "mt-16 rounded-xl animate-bounce",
               })}
             >
               Get started <ArrowRight className="ml-2 h-5 w-5" />
@@ -60,73 +60,70 @@ const LandingPage: React.FC = () => {
       </div>
 
       {/* HERO SECTION - 2*/}
-
-      <MaxWidthWrapper className="max-w-6xl px-4 mt-20 sm:mt-26 mb-12">
-        <div className="pattern1 p-8 w-full flex flex-col space-y-14">
-          <div className="grid grid-cols-3 gap-x-8">
-            <div className="relative col-span-1 place-self-center">
-              <Image
-                src="/images/create.png"
-                alt="product preview"
-                width={254}
-                height={254}
-                // fill
-                quality={100}
-                priority
-                sizes="100vw"
-                className="object-cover shadow-2xl rounded-3xl ring-4 ring-offset-8 ring-zinc-200/90 bg-slate-300 hover:scale-105 transition ease-in-out duration-500"
-              />
+      <div className="pattern1 px-4 py-8 xs:p-12 my-20 sm:my-26">
+        <MaxWidthWrapper className="max-w-6xl p-4">
+          <div className="flex flex-col space-y-14">
+            <div className="grid grid-cols-3 gap-x-8">
+              <div className="col-span-1 place-self-center">
+                <Image
+                  src="/images/create.png"
+                  alt="product preview"
+                  width={254}
+                  height={254}
+                  quality={100}
+                  priority
+                  sizes="100vw"
+                  className="object-cover shadow-2xl rounded-3xl ring-4 ring-offset-8 ring-zinc-200/90 bg-slate-300 hover:scale-105 transition ease-in-out duration-500"
+                />
+              </div>
+              <div className="col-span-2 place-self-center">
+                <h2 className="lg:text-[70px] sm:text-[50px] xs:text-[35px] text-[25px] leading-normal sm:leading-[1.3] font-black bg-gradient-to-r from-emerald-500 to-purple-600 bg-clip-text text-transparent">
+                  Prepare your tailored resume
+                </h2>
+              </div>
             </div>
-            <div className="col-span-2 place-self-center">
-              <h2 className="lg:text-[70px] sm:text-[50px] xs:text-[35px] text-[25px] leading-normal font-black bg-gradient-to-r from-emerald-500 to-purple-600 bg-clip-text text-transparent">
-                Prepare your tailored resume
-              </h2>
+
+            <div className="grid grid-cols-3 gap-x-8">
+              <div className="col-span-1 place-self-center">
+                <Image
+                  src="/images/upload.png"
+                  alt="product preview"
+                  width={254}
+                  height={254}
+                  quality={100}
+                  priority
+                  sizes="100"
+                  className="object-cover shadow-2xl rounded-3xl ring-4 ring-offset-8 ring-zinc-200/90 bg-slate-300 hover:scale-105 transition ease-in-out duration-500"
+                />
+              </div>
+              <div className="col-span-2 place-self-center">
+                <h2 className="lg:text-[70px] sm:text-[50px] xs:text-[35px] text-[25px] leading-normal sm:leading-[1.3] font-black bg-gradient-to-r from-sky-400 to-purple-600 bg-clip-text text-transparent">
+                  Upload to CITA powered by Gemini
+                </h2>
+              </div>
+            </div>
+            <div className="grid grid-cols-3 gap-x-8">
+              <div className="col-span-1 place-self-center">
+                <Image
+                  src="/images/interview.png"
+                  alt="product preview"
+                  width={254}
+                  height={254}
+                  quality={100}
+                  priority
+                  sizes="100"
+                  className="object-cover shadow-2xl rounded-3xl ring-4 ring-offset-8 ring-zinc-200/90 bg-slate-300 hover:scale-105 transition ease-in-out duration-500"
+                />
+              </div>
+              <div className="col-span-2 place-self-center">
+                <h2 className="lg:text-[70px] sm:text-[50px] xs:text-[35px] text-[25px] leading-normal sm:leading-[1.3] font-black bg-gradient-to-r from-amber-500 to-purple-600 bg-clip-text text-transparent">
+                  Try mock interviews
+                </h2>
+              </div>
             </div>
           </div>
-
-          <div className="grid grid-cols-3 gap-x-8">
-            <div className="relative col-span-1 place-self-center">
-              <Image
-                src="/images/upload.png"
-                alt="product preview"
-                width={254}
-                height={254}
-                // fill
-                quality={100}
-                priority
-                sizes="100"
-                className="object-cover shadow-2xl rounded-3xl ring-4 ring-offset-8 ring-zinc-200/90 bg-slate-300 hover:scale-105 transition ease-in-out duration-500"
-              />
-            </div>
-            <div className="col-span-2 place-self-center">
-              <h2 className="lg:text-[70px] sm:text-[50px] xs:text-[35px] text-[25px] leading-normal font-black bg-gradient-to-r from-sky-400 to-purple-600 bg-clip-text text-transparent">
-                Upload to CITA powered by Gemini{" "}
-              </h2>
-            </div>
-          </div>
-
-          <div className="grid grid-cols-3 gap-x-8">
-            <div className="relative col-span-1 place-self-center">
-              <Image
-                src="/images/interview.png"
-                alt="product preview"
-                width={254}
-                height={254}
-                // fill
-                quality={100}
-                priority
-                sizes="100"
-                className="object-cover shadow-2xl rounded-3xl ring-4 ring-offset-8 ring-zinc-200/90 bg-slate-300 hover:scale-105 transition ease-in-out duration-500"
-              />
-            </div>
-            <div className="col-span-2 place-self-center">
-              <h2 className="lg:text-[70px] sm:text-[50px] xs:text-[35px] text-[25px] leading-normal font-black bg-gradient-to-r from-amber-500 to-purple-600 bg-clip-text text-transparent">
-                Try mock interviews
-              </h2>
-            </div>
-          </div>
-        </div>
-      </MaxWidthWrapper>
+        </MaxWidthWrapper>
+      </div>
     </section>
   );
 };

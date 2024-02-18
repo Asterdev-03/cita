@@ -28,37 +28,37 @@ const DashboardPage: React.FC = () => {
   // Dummy data
   const files = [
     {
-      id: "123",
-      name: "file 1",
-      key: "123",
+      id: "123abc",
+      name: "Interview for Google",
+      key: "123abc",
       createdAt: "2023-12-21T13:51:06.661+00:00",
       updatedAt: "2023-12-28T13:51:06.661+00:00",
     },
     {
-      id: "1234",
-      name: "ndjnythntsrdhnrnt",
-      key: "1234",
+      id: "1234abcd",
+      name: "Meta interview",
+      key: "1234abcd",
       createdAt: "2023-12-22T13:51:06.661+00:00",
       updatedAt: "2023-12-28T13:51:06.661+00:00",
     },
     {
-      id: "12345",
-      name: "dbfdbsfefasfaewfwfa",
-      key: "12345",
+      id: "12345adcde",
+      name: "TCS SDE interview",
+      key: "12345adcde",
       createdAt: "2023-12-19T13:51:06.661+00:00",
       updatedAt: "2023-12-28T13:51:06.661+00:00",
     },
     {
-      id: "123456",
-      name: "fse",
-      key: "123456",
+      id: "123456adcdef",
+      name: "CITA internship mock",
+      key: "123456adcdef",
       createdAt: "2023-12-29T13:51:06.661+00:00",
       updatedAt: "2023-12-28T13:51:06.661+00:00",
     },
     {
-      id: "1234567",
-      name: "sfbnaewiuneujniofjp",
-      key: "1234567",
+      id: "1234567abcdefg",
+      name: "Sample interview",
+      key: "1234567abcdefg",
       createdAt: "2023-12-30T13:51:06.661+00:00",
       updatedAt: "2023-12-28T13:51:06.661+00:00",
     },
@@ -166,7 +166,7 @@ const DashboardPage: React.FC = () => {
           </div>
 
           {/* This calender renders in large and small screen */}
-          <div className="hidden lg:block max-sm:block place-self-center lg:place-self-end">
+          <div className="hidden lg:block max-sm:block place-self-center lg:place-self-end max-sm:mt-10">
             <Calendar
               mode="single"
               className="rounded-md border"
@@ -178,7 +178,7 @@ const DashboardPage: React.FC = () => {
           </div>
 
           {/* This calender renders in medium screen */}
-          <div className="hidden lg:hidden sm:block place-self-center lg:place-self-end">
+          <div className="hidden lg:hidden sm:block place-self-center lg:place-self-end mt-10">
             <Calendar
               mode="single"
               className="rounded-md border"

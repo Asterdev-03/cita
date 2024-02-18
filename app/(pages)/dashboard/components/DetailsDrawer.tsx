@@ -36,8 +36,10 @@ export default function DetailsDrawer({ file }: Props) {
       </DrawerTrigger>
       <DrawerContent>
         <DrawerHeader>
-          <DrawerTitle>Are you absolutely sure?</DrawerTitle>
-          <DrawerDescription>This action cannot be undone.</DrawerDescription>
+          <DrawerTitle>Past Records</DrawerTitle>
+          <DrawerDescription>
+            You are viewing sensitive information
+          </DrawerDescription>
         </DrawerHeader>
         <DrawerFooter>
           <Button>Submit</Button>

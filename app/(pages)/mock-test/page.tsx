@@ -117,7 +117,6 @@ const MockTestPage: React.FC = () => {
     <section
       className={`${inter.className} min-h-screen bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-100`}
     >
-      {/* <TextToSpeech /> */}
       <div className="flex flex-row p-5 gap-4">
         <div className="w-1/4 p-4 border-2 rounded-2xl bg-zinc-50">
           <div className="grid grid-cols-1 h-full">
@@ -172,6 +171,7 @@ const MockTestPage: React.FC = () => {
           </div>
         </div>
       </div>
+      <TextToSpeech />
       <Dialog
         open={isModalOpen}
         onOpenChange={(vis: boolean) => {
