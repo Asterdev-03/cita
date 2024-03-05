@@ -1,3 +1,5 @@
+"use client";
+
 import { Avatar } from "@/components/ui/avatar";
 import { Camera, CameraOff, SquareUserRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";

@@ -32,7 +32,7 @@ const MockTestPage: React.FC = () => {
   const [startSession, setStartSession] = useState<boolean>(false);
   const [endSession, setEndSession] = useState<boolean>(true);
 
-  const [isListeningDisabled, setIsListeningDisabled] = useState<boolean>(true);
+  // const [isListeningDisabled, setIsListeningDisabled] = useState<boolean>(true);
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
@@ -56,11 +56,11 @@ const MockTestPage: React.FC = () => {
     }
     const res = await response.json();
     setQuestions(res);
-    setIsListeningDisabled(false);
+    // setIsListeningDisabled(false);
     playVoice(res[index], () => {
       console.log("stop");
-      setIsListeningDisabled(true); // Set isPlaying to false after speech synthesis is done
-      console.log(isListeningDisabled); // Set isPlaying to false after speech synthesis is done
+      // setIsListeningDisabled(true); // Set isPlaying to false after speech synthesis is done
+      // console.log(isListeningDisabled); // Set isPlaying to false after speech synthesis is done
     });
   };
 
@@ -97,11 +97,11 @@ const MockTestPage: React.FC = () => {
 
   async function handleSend() {
     if (index < questions.length - 1) {
-      setIsListeningDisabled(false);
+      // setIsListeningDisabled(false);
       playVoice(questions[index + 1], () => {
         console.log("stop");
-        setIsListeningDisabled(true); // Set isPlaying to false after speech synthesis is done
-        setIsListeningDisabled(true); // Set isPlaying to false after speech synthesis is done
+        // setIsListeningDisabled(true); // Set isPlaying to false after speech synthesis is done
+        // setIsListeningDisabled(true); // Set isPlaying to false after speech synthesis is done
       });
       setIndex(index + 1);
     } else {
@@ -144,7 +144,7 @@ const MockTestPage: React.FC = () => {
         <div className="flex flex-col w-full border-2 rounded-2xl bg-white p-4 gap-y-2">
           <div className="flex gap-x-2">
             <div className="relative h-[450px] w-2/3 bg-gray-100 rounded-2xl overflow-hidden">
-              <TalkingAvatar isDisabled={isListeningDisabled} />
+              <TalkingAvatar />
               <div className="absolute min-h-[50px] h-fit bottom-0 text-center w-full backdrop-blur-md bg-gray-50/50 p-4">
                 <p>{questions ? questions[index] : ""}</p>
               </div>
