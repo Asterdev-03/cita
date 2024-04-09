@@ -17,7 +17,8 @@ import { WebCamera } from "./components/WebCamera";
 import TalkingAvatar from "./components/TalkingAvatar";
 import { MicWithTranscript } from "./components/MicWithTranscript";
 import TextToSpeech, { playVoice } from "./components/TextToSpeech";
-
+import Link from "next/link";
+import { useRouter } from "next/navigation";
 // export const metadata: Metadata = {
 //   title: "Mock Test",
 // };
@@ -30,14 +31,15 @@ const MockTestPage: React.FC = () => {
   const initialTime: number = 10 * 60; // 10 minutes converted to seconds
   const [time, setTime] = useState<number>(initialTime);
   const [startSession, setStartSession] = useState<boolean>(false);
-  const [endSession, setEndSession] = useState<boolean>(true);
 
   // const [isListeningDisabled, setIsListeningDisabled] = useState<boolean>(true);
+
+  const router = useRouter();
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
-    if (startSession && !endSession && time > 0) {
+    if (startSession && time > 0) {
       timer = setInterval(() => {
         setTime((prevTime) => prevTime - 1);
       }, 1000);
@@ -45,11 +47,16 @@ const MockTestPage: React.FC = () => {
     return () => {
       clearInterval(timer);
     };
-  }, [startSession, endSession, time]);
+  }, [startSession, time]);
 
   const fetchQuestions = async () => {
+    const info = {
+      resume: window.sessionStorage.getItem("resume"),
+      job: window.sessionStorage.getItem("job"),
+    };
     const response = await fetch("/api/questions", {
-      method: "GET",
+      method: "POST",
+      body: JSON.stringify(info),
     });
     if (response.status === 500) {
       throw new Error("Failed to delete");
@@ -81,14 +88,12 @@ const MockTestPage: React.FC = () => {
       setIsModalOpen(true);
     } else {
       setStartSession(true);
-      setEndSession(false);
       fetchQuestions();
     }
   }
 
   function onEndSession() {
     setIsModalOpen(false);
-    setEndSession(true);
     setStartSession(false);
     setTime(initialTime);
     setQuestions([]);
@@ -106,6 +111,7 @@ const MockTestPage: React.FC = () => {
       setIndex(index + 1);
     } else {
       onEndSession();
+      router.push("/result");
     }
 
     // SpeechRecognition.stopListening();
@@ -133,7 +139,7 @@ const MockTestPage: React.FC = () => {
             </div>
             <button
               className={`p-3 ${
-                endSession ? `bg-green-500` : `bg-red-500 hover:bg-red-400`
+                startSession ? `bg-red-500` : `bg-green-500 hover:bg-red-400`
               } transition duration-300 text-white rounded-full`}
               onClick={handleSessionChange}
             >
@@ -191,7 +197,6 @@ const MockTestPage: React.FC = () => {
             <Button
               onClick={() => {
                 setIsModalOpen(false);
-                setEndSession(false);
               }}
               className={buttonVariants({
                 size: "lg",
@@ -201,8 +206,8 @@ const MockTestPage: React.FC = () => {
             >
               Cancel
             </Button>
-            <Button
-              onClick={onEndSession}
+            <Link
+              href="/result"
               className={buttonVariants({
                 size: "lg",
                 variant: "default",
@@ -210,7 +215,7 @@ const MockTestPage: React.FC = () => {
               })}
             >
               End
-            </Button>
+            </Link>
           </DialogFooter>
         </DialogContent>
       </Dialog>

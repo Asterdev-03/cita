@@ -255,11 +255,11 @@ const TalkingAvatar = () => {
     renderer.setPixelRatio(window.devicePixelRatio);
 
     camera.position.set(0, 1.5, 1.3);
-
+    /* 
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.screenSpacePanning = true;
     controls.target.set(0.0, 1.45, 0.0);
-    controls.update();
+    controls.update(); */
 
     const light = new THREE.DirectionalLight(0xffffff);
     light.position.set(1.0, 1.0, 1.0).normalize();

@@ -84,7 +84,7 @@ export default function Navbar() {
               <h4>Sign in</h4>
             </Link>
             <Link
-              href="/"
+              href="/dashboard"
               className={buttonVariants({
                 variant: "default",
                 size: "sm",

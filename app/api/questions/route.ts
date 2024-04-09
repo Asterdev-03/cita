@@ -1,8 +1,11 @@
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
-export async function GET(req: Request) {
+export async function POST(req: Request) {
   try {
+    const body = await req.json();
+    const { resume, job } = body;
+
     const key = process.env.API_KEY;
 
     if (key === undefined) {
@@ -20,8 +23,7 @@ export async function GET(req: Request) {
       ];
       return NextResponse.json(text);
     } else {
-      const prompt =
-        "generate a list of common interview questions. Each question must be in a single line without any bulletins. Do not use any bulletins like: 1. Introduce yourself. Do not generate any description, only generate the questions separated by \\n";
+      const prompt = `This is my resume: ${resume} and the job description: ${job}. Generate a list of common interview questions based on my resume and the job description provided. Each question must be in a single line without any bulletins. Avoid using bulletins or numbering. Provide questions separated by \\n.`;
 
       const genAI = new GoogleGenerativeAI(`${key}`);
 
@@ -31,7 +33,7 @@ export async function GET(req: Request) {
 
       console.log(prompt);
       const result = await model.generateContent(prompt);
-      const response = await result.response;
+      const response = result.response;
       const text = response.text();
       console.log(text, "\n\n");
 

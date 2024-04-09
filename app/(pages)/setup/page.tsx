@@ -14,8 +14,8 @@ import BreadcrumbNav from "@/components/BreadcrumbNav";
 // };
 
 const SetupPage: React.FC = () => {
-  const [file1, setFile1] = useState<String>("");
-  const [file2, setFile2] = useState<String>("");
+  const [file1, setFile1] = useState<string>("");
+  const [file2, setFile2] = useState<string>("");
   const [flag, setFlag] = useState<Boolean>(true);
 
   const handleChange = (event: React.ChangeEvent<HTMLInputElement>): void => {
@@ -23,12 +23,14 @@ const SetupPage: React.FC = () => {
     const fileReader = new FileReader();
 
     fileReader.onload = (event: ProgressEvent<FileReader>) => {
-      const content = event.target?.result as String;
+      const content = event.target?.result as string;
       if (flag) {
         setFile1(content);
+        window.sessionStorage.setItem("resume", content);
         setFlag(!flag);
       } else {
         setFile2(content);
+        window.sessionStorage.setItem("job", content);
       }
     };
 
