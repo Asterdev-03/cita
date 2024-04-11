@@ -1,8 +1,13 @@
 "use client";
 
 import React, { useEffect, useState } from "react";
-// import { Metadata } from "next";
 import { inter } from "@/lib/fonts";
+
+import MicWithTranscript from "./components/MicWithTranscript";
+import TalkingAvatar from "./components/TalkingAvatar";
+import TextToSpeech, { playVoice } from "./components/TextToSpeech";
+import WebCamera from "./components/WebCamera";
+
 import {
   Dialog,
   DialogContent,
@@ -11,29 +16,28 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { SendHorizontal } from "lucide-react";
 import { Button, buttonVariants } from "@/components/ui/button";
-import { WebCamera } from "./components/WebCamera";
-import TalkingAvatar from "./components/TalkingAvatar";
-import { MicWithTranscript } from "./components/MicWithTranscript";
-import TextToSpeech, { playVoice } from "./components/TextToSpeech";
+import { SendHorizontal } from "lucide-react";
+
 import Link from "next/link";
 import { useRouter } from "next/navigation";
-// export const metadata: Metadata = {
-//   title: "Mock Test",
-// };
+
+import SpeechRecognition, {
+  useSpeechRecognition,
+} from "react-speech-recognition";
 
 const MockTestPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [questions, setQuestions] = useState([]);
   const [index, setIndex] = useState<number>(0);
-
-  const initialTime: number = 10 * 60; // 10 minutes converted to seconds
+  const initialTime: number = 600; // 10 minutes converted to seconds
   const [time, setTime] = useState<number>(initialTime);
   const [startSession, setStartSession] = useState<boolean>(false);
+  const [userInput, setUserInput] = useState<string>("");
+  const [userInputs, setUserInputs] = useState<string[]>([]);
+  const [isListeningDisabled, setIsListeningDisabled] = useState<boolean>(true);
 
-  // const [isListeningDisabled, setIsListeningDisabled] = useState<boolean>(true);
-
+  const { transcript, resetTranscript } = useSpeechRecognition();
   const router = useRouter();
 
   useEffect(() => {
@@ -61,13 +65,14 @@ const MockTestPage: React.FC = () => {
     if (response.status === 500) {
       throw new Error("Failed to delete");
     }
-    const res = await response.json();
-    setQuestions(res);
-    // setIsListeningDisabled(false);
-    playVoice(res[index], () => {
+
+    const questionsList = await response.json();
+    setQuestions(questionsList);
+
+    setIsListeningDisabled(true);
+    playVoice(questionsList[index], () => {
       console.log("stop");
-      // setIsListeningDisabled(true); // Set isPlaying to false after speech synthesis is done
-      // console.log(isListeningDisabled); // Set isPlaying to false after speech synthesis is done
+      setIsListeningDisabled(false);
     });
   };
 
@@ -80,11 +85,11 @@ const MockTestPage: React.FC = () => {
   };
 
   function handleSessionChange(): void {
+    // setVideoStatus(false);
+    // setVoiceStatus(false);
+    SpeechRecognition.stopListening();
+    resetTranscript();
     if (startSession) {
-      // setVideoStatus(false);
-      // setVoiceStatus(false);
-      // SpeechRecognition.stopListening();
-      // resetTranscript();
       setIsModalOpen(true);
     } else {
       setStartSession(true);
@@ -100,18 +105,26 @@ const MockTestPage: React.FC = () => {
     setIndex(0);
   }
 
+  function handleClear(): void {
+    SpeechRecognition.stopListening();
+    resetTranscript();
+  }
+
   async function handleSend() {
+    setIsListeningDisabled(true);
+    setUserInputs([...userInputs, userInput]);
+    console.log(userInputs);
+    handleClear();
     if (index < questions.length - 1) {
-      // setIsListeningDisabled(false);
       playVoice(questions[index + 1], () => {
         console.log("stop");
-        // setIsListeningDisabled(true); // Set isPlaying to false after speech synthesis is done
-        // setIsListeningDisabled(true); // Set isPlaying to false after speech synthesis is done
+        setIsListeningDisabled(false);
       });
       setIndex(index + 1);
     } else {
       onEndSession();
-      router.push("/result");
+      console.log(userInputs);
+      // router.push("/result");
     }
 
     // SpeechRecognition.stopListening();
@@ -164,7 +177,13 @@ const MockTestPage: React.FC = () => {
           </div>
           <div className="grid grid-cols-12 gap-x-2">
             <div className="col-span-11 w-full">
-              <MicWithTranscript />
+              <MicWithTranscript
+                setUserInput={setUserInput}
+                transcript={transcript}
+                resetTranscript={resetTranscript}
+                SpeechRecognition={SpeechRecognition}
+                isListeningDisabled={isListeningDisabled}
+              />
             </div>
             <div className="flex col-span-1s justify-center items-center">
               <button

@@ -1,27 +1,38 @@
 "use client";
 
 import "regenerator-runtime";
-import { MessageCircleOff, Mic, MicOff, SendHorizontal } from "lucide-react";
+import { MessageCircleOff, Mic, MicOff } from "lucide-react";
 import React, { useEffect, useRef, useState } from "react";
-import SpeechRecognition, {
-  useSpeechRecognition,
-} from "react-speech-recognition";
 
-export const MicWithTranscript: React.FC = () => {
-  const [voiceStatus, setVoiceStatus] = useState<boolean>(false);
+interface MicWithTranscriptProps {
+  setUserInput: (value: string) => void;
+  transcript: string;
+  resetTranscript: any;
+  SpeechRecognition: any;
+  isListeningDisabled: boolean;
+}
+
+const MicWithTranscript: React.FC<MicWithTranscriptProps> = ({
+  setUserInput,
+  transcript,
+  resetTranscript,
+  SpeechRecognition,
+  isListeningDisabled,
+}) => {
+  const [micOn, setMicOn] = useState<boolean>(false);
 
   const divRef = useRef<HTMLDivElement>(null);
-  const { transcript, resetTranscript } = useSpeechRecognition();
 
   function handleVoice(): void {
-    if (!voiceStatus) {
-      setVoiceStatus(true);
+    if (!micOn) {
+      setMicOn(true);
       SpeechRecognition.startListening({
         continuous: true,
         language: "en-IN",
       });
     } else {
-      setVoiceStatus(false);
+      setMicOn(false);
+      setUserInput(transcript);
       SpeechRecognition.stopListening();
     }
   }
@@ -29,7 +40,7 @@ export const MicWithTranscript: React.FC = () => {
   function handleClear(): void {
     SpeechRecognition.stopListening();
     resetTranscript();
-    setVoiceStatus(false);
+    setMicOn(false);
   }
 
   useEffect(() => {
@@ -48,12 +59,9 @@ export const MicWithTranscript: React.FC = () => {
         <button
           className="bottom-0 bg-red-400 hover:bg-red-500 transition duration-300 h-11 w-11 rounded-full flex justify-center items-center"
           onClick={handleVoice}
+          disabled={isListeningDisabled}
         >
-          {voiceStatus ? (
-            <Mic absoluteStrokeWidth />
-          ) : (
-            <MicOff absoluteStrokeWidth />
-          )}
+          {micOn ? <Mic absoluteStrokeWidth /> : <MicOff absoluteStrokeWidth />}
         </button>
         <button
           className="h-11 w-11 flex justify-center items-center bg-zinc-500 hover:bg-zinc-700 transition duration-300 rounded-full text-white"
@@ -65,3 +73,5 @@ export const MicWithTranscript: React.FC = () => {
     </div>
   );
 };
+
+export default MicWithTranscript;

@@ -5,7 +5,7 @@ import { Camera, CameraOff, SquareUserRound } from "lucide-react";
 import { useEffect, useRef, useState } from "react";
 import Webcam from "react-webcam";
 
-export const WebCamera = () => {
+const WebCamera = () => {
   const [videoStatus, setVideoStatus] = useState<boolean>(false);
 
   const webcamRef = useRef<Webcam>(null);
@@ -63,3 +63,5 @@ export const WebCamera = () => {
     </div>
   );
 };
+
+export default WebCamera;
