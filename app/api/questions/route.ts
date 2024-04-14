@@ -1,3 +1,4 @@
+import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
 
@@ -6,32 +7,37 @@ export async function POST(req: Request) {
     const body = await req.json();
     // const { resume, job } = body;
 
+    const text = [
+      "Tell me about yourself.",
+      "Why are you interested in this position?",
+      "Why should we hire you?",
+      "What are your greatest strengths and weaknesses?",
+      "Where do you see yourself in five years?",
+      "Why did you leave your last job?",
+      "What are your salary expectations?",
+      "What are your proudest professional accomplishments?",
+      "What is your favorite way to learn new things?",
+      "What are your current job responsibilities?",
+    ];
+    const resume = `An aspiring Computer Science student.\nWORK HISTORY:\n1. Web Developer for Blueway Trading Company\n2. Front-end Developer (Volunteer) for GTech MuLearn\nSKILLS: C, C++, Java, Python , Database: MySQL, MongoDB , Time Management, Project Planning, HTML5, CSS, JavaScript , Problem Solving , Team Management, MERN Stack, Next.js, Detail-Oriented, Self-Management\nPERSONAL PROJECTS: Conversational Interview and Training Assistant (Ongoing),Quiz Web App,Portfolio Website,Discord Bot`;
+    const job = `React Developer`;
+    const score = Math.floor(Math.random() * 100) + 1;
+
     const key = process.env.API_KEY;
 
     if (key === undefined) {
-      const text = [
-        "Tell me about yourself.",
-        "Why are you interested in this position?",
-        "Why should we hire you?",
-        "What are your greatest strengths and weaknesses?",
-        "Where do you see yourself in five years?",
-        "Why did you leave your last job?",
-        "What are your salary expectations?",
-        "What are your proudest professional accomplishments?",
-        "What is your favorite way to learn new things?",
-        "What are your current job responsibilities?",
-      ];
+      await prismadb.interview.create({
+        data: {
+          userId: "cluvdmhxs000013vrttdznwdf",
+          questions: text,
+          resume: resume,
+          jobTitle: job,
+          score: 0,
+        },
+      });
       return NextResponse.json(text);
     } else {
-      const resume = `Aspiring Computer Science student.
-WORK HISTORY:
-1. Web Developer for Blueway Trading Company
-2. Front-end Developer (Volunteer) for GTech MuLearn
-SKILLS: C, C++, Java, Python , Database: MySQL, MongoDB , Time Management, Project Planning, HTML5, CSS, JavaScript , Problem Solving , Team Management, MERN Stack, Next.js, Detail-Oriented, Self-Management
-PERSONAL PROJECTS: Conversational Interview and Training Assistant (Ongoing),Quiz Web App,Portfolio Website,Discord Bot`;
-      const job = `React Native Developer`;
-
-      const prompt = `This is my resume: ${resume} and the job description: ${job}. Generate a list of common interview questions based on my resume and the job description provided. Each question must be in a single line without any bulletins. Avoid using bulletins or numbering. Provide questions separated by \\n.`;
+      const prompt = `This is my resume: ${resume} and the job description: ${job}. Generate a list of common interview questions based on my resume and the job description provided. Each question must be in a single line without any bulletins. Avoid using bulletins or numbering. DO NOT classify the questions as technical questions or HR questions, All questions should be in a shuffled manner. Provide questions separated by \\n.`;
 
       const genAI = new GoogleGenerativeAI(`${key}`);
 
@@ -48,10 +54,20 @@ PERSONAL PROJECTS: Conversational Interview and Training Assistant (Ongoing),Qui
       // Now, 'sentencesArray' contains each sentence as an element
       console.log(sentencesArray);
 
+      await prismadb.interview.create({
+        data: {
+          userId: "cluvdmhxs000013vrttdznwdf",
+          questions: sentencesArray,
+          resume: resume,
+          jobTitle: job,
+          score: 0,
+        },
+      });
+
       return NextResponse.json(sentencesArray);
     }
   } catch (error) {
-    console.log("[COMPANION_POST]", error);
+    console.log("[INTERVIEW_POST]", error);
     return new NextResponse("Internal Error", { status: 500 });
   }
 }

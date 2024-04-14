@@ -76,6 +76,20 @@ const MockTestPage: React.FC = () => {
     });
   };
 
+  const evaluateScore = async () => {
+    const info = {
+      interviewId: "cluvmdg3u000nul3ntchtxjl0",
+      userInputs: [...userInputs, userInput],
+    };
+    const response = await fetch("/api/evaluatescore", {
+      method: "POST",
+      body: JSON.stringify(info),
+    });
+    if (response.status === 500) {
+      throw new Error("Failed to delete");
+    }
+  };
+
   const formatTime = (seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
@@ -124,12 +138,9 @@ const MockTestPage: React.FC = () => {
     } else {
       onEndSession();
       console.log(userInputs);
+      evaluateScore();
       // router.push("/result");
     }
-
-    // SpeechRecognition.stopListening();
-    // resetTranscript();
-    // setVoiceStatus(false);
   }
 
   return (
@@ -143,7 +154,7 @@ const MockTestPage: React.FC = () => {
             <p className="text-xl">
               You are being interviewed for <br />
               <span className="font-black text-left text-[40px] text-purple-800 leading-10">
-                Junior Software Engineer
+                React Developer
               </span>
             </p>
             <div>
