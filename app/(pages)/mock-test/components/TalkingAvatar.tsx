@@ -1,95 +1,124 @@
 "use client";
 
-import React, { useRef, useEffect } from "react";
+import React, { useRef, useEffect, useState } from "react";
 import * as THREE from "three";
-import { GLTFLoader, OrbitControls } from "three/addons";
+import { GLTFLoader } from "three/addons";
 import {
   VRMExpressionPresetName,
   VRMHumanBoneName,
   VRMLoaderPlugin,
 } from "@pixiv/three-vrm";
 
-// interface TalkingAvatar {
-//   isDisabled: boolean;
-// }
+interface TalkingAvatarProps {
+  isUserSpeaking: boolean;
+}
 
-const TalkingAvatar = () => {
-  // if (typeof document === "undefined") {
-  //   return <div>Cannot Render</div>;
-  // }
-
+const TalkingAvatar: React.FC<TalkingAvatarProps> = ({ isUserSpeaking }) => {
   // Global variables
-  let currentVrm: any = undefined;
-  const loader = new GLTFLoader();
+  const containerRef = useRef<HTMLDivElement>(null);
+  const camera = new THREE.PerspectiveCamera(30.0, 700 / 500, 0.1, 50.0);
+  const scene = new THREE.Scene();
   const clock = new THREE.Clock();
   const lookAtTarget = new THREE.Object3D();
-  const scene = new THREE.Scene();
 
-  // Expression setup
-  let expressionYay = 0;
-  let expressionOof = 0;
-  let expressionLimitYay = 0.5;
-  let expressionLimitOof = 0.5;
-  let expressionEase = 100;
+  let currentVrm: any = undefined;
+  let renderer: THREE.WebGLRenderer | null = null;
+  let blinkInterval: ReturnType<typeof setInterval> | null = null;
 
   let mouthThreshold = 1;
   let mouthBoost = 10;
   let bodyThreshold = 15;
   let bodyMotion = 10;
 
-  let renderer: any;
-
-  const talktime = true;
-  const containerRef = useRef<HTMLDivElement>(null);
-  const camera = new THREE.PerspectiveCamera(30.0, 700 / 500, 0.1, 50.0);
-
-  function load(url: string) {
+  const loadModel = (url: string) => {
     if (containerRef.current && containerRef.current.children.length > 0) {
       console.log("Model is already loaded.");
       return;
     }
+    const loader = new GLTFLoader();
+    loader.register((parser: any) => {
+      return new VRMLoaderPlugin(parser);
+    });
     loader.load(
       url,
       (gltf: any) => {
         scene.add(gltf.scene);
 
-        let vrm = gltf.userData.vrm;
-        currentVrm = vrm;
-
-        console.log(vrm);
-
-        vrm.humanoid.getNormalizedBoneNode(
-          VRMHumanBoneName["Hips"]
-        ).rotation.y = Math.PI;
-        vrm.springBoneManager.reset();
-
-        vrm.humanoid.getNormalizedBoneNode(
-          VRMHumanBoneName["RightUpperArm"]
-        ).rotation.z = 250;
-
-        vrm.humanoid.getNormalizedBoneNode(
-          VRMHumanBoneName["RightLowerArm"]
-        ).rotation.z = -0.2;
-
-        vrm.humanoid.getNormalizedBoneNode(
-          VRMHumanBoneName["LeftUpperArm"]
-        ).rotation.z = -250;
-
-        vrm.humanoid.getNormalizedBoneNode(
-          VRMHumanBoneName["LeftLowerArm"]
-        ).rotation.z = 0.2;
+        currentVrm = gltf.userData.vrm;
+        console.log(currentVrm);
+        initializeAvatar();
       },
-      (progress: any) =>
-        console.log(
-          "Loading model...",
-          100.0 * (progress.loaded / progress.total),
-          "%"
-        ),
+      (progress: any) => {
+        // console.log(
+        //   "Loading model...",
+        //   100.0 * (progress.loaded / progress.total),
+        //   "%"
+        // );
+      },
       (error: any) => console.error(error)
     );
-  }
+  };
 
-  function blink(camera: THREE.Camera) {
+  const initializeAvatar = () => {
+    currentVrm.humanoid.getNormalizedBoneNode(
+      VRMHumanBoneName["Hips"]
+    ).rotation.y = Math.PI;
+    currentVrm.springBoneManager.reset();
+
+    setupBoneRotations();
+  };
+
+  const setupBoneRotations = () => {
+    currentVrm.humanoid.getNormalizedBoneNode(
+      VRMHumanBoneName["RightUpperArm"]
+    ).rotation.z = 250;
+    currentVrm.humanoid.getNormalizedBoneNode(
+      VRMHumanBoneName["RightLowerArm"]
+    ).rotation.z = -0.2;
+    currentVrm.humanoid.getNormalizedBoneNode(
+      VRMHumanBoneName["LeftUpperArm"]
+    ).rotation.z = -250;
+    currentVrm.humanoid.getNormalizedBoneNode(
+      VRMHumanBoneName["LeftLowerArm"]
+    ).rotation.z = 0.2;
+  };
+
+  const setupRenderer = () => {
+    if (!containerRef.current) return;
+    renderer = new THREE.WebGLRenderer({
+      alpha: true,
+      antialias: true,
+      powerPreference: "low-power",
+    });
+    console.log(700, 500);
+    renderer.setSize(700, 500);
+    renderer.setPixelRatio(window.devicePixelRatio);
+
+    camera.position.set(0, 1.5, 1.3);
+
+    const light = new THREE.DirectionalLight(0xffffff);
+    light.position.set(1.0, 1.0, 1.0).normalize();
+    scene.add(light);
+
+    camera.add(lookAtTarget);
+
+    containerRef.current.appendChild(renderer.domElement);
+  };
+
+  const startAnimation = () => {
+    function animate() {
+      if (!renderer) return;
+      requestAnimationFrame(animate);
+      const deltaTime = clock.getDelta();
+      if (currentVrm) {
+        currentVrm.update(deltaTime);
+      }
+      renderer.render(scene, camera);
+    }
+    animate();
+  };
+
+  const startBlinking = () => {
     const blinkTimeout = Math.floor(Math.random() * 250) + 50;
     lookAtTarget.position.y = camera.position.y - camera.position.y * 2 + 1.25;
 
@@ -102,17 +131,9 @@ const TalkingAvatar = () => {
     if (currentVrm) {
       currentVrm.expressionManager.setValue(VRMExpressionPresetName.Blink, 1);
     }
-  }
+  };
 
-  (function loop() {
-    var rand = Math.round(Math.random() * 5000) + 1000;
-    setTimeout(function () {
-      blink(camera);
-      loop();
-    }, rand);
-  })();
-
-  function micListener() {
+  const micListener = () => {
     navigator.mediaDevices
       .getUserMedia({
         audio: true,
@@ -126,11 +147,6 @@ const TalkingAvatar = () => {
           analyser.smoothingTimeConstant = 0.5;
           analyser.fftSize = 1024;
 
-          // const workletScriptUrl = new URL(
-          //   "components/my-worklet-processor.js",
-          //   import.meta.url
-          // );
-
           // Create an AudioWorkletNode
           audioContext.audioWorklet
             .addModule("my-worklet-processor.js")
@@ -143,12 +159,9 @@ const TalkingAvatar = () => {
               workletNode.port.onmessage = function (event: MessageEvent) {
                 const { inputVolume } = event.data;
                 let inputVolumeAdjusted = inputVolume * 200000;
-                // console.log(inputVolumeAdjusted);
-
-                // console.log(isDisabled);
                 if (currentVrm !== undefined) {
                   // Talk
-                  if (talktime === true) {
+                  if (isUserSpeaking === true) {
                     var vowelDamp = 53;
                     var vowelMin = 12;
                     if (inputVolumeAdjusted > mouthThreshold * 2) {
@@ -188,27 +201,6 @@ const TalkingAvatar = () => {
                       bone.rotation.z /= springback;
                     });
                   }
-
-                  // Yay/oof expression drift
-                  // expressionYay += (Math.random() - 0.5) / expressionEase;
-                  // expressionYay = Math.min(
-                  //   Math.max(expressionYay, 0),
-                  //   expressionLimitYay
-                  // );
-                  // currentVrm.expressionManager.setValue(
-                  //   VRMExpressionPresetName.Relaxed,
-                  //   expressionYay
-                  // );
-
-                  // expressionOof += (Math.random() - 0.5) / expressionEase;
-                  // expressionOof = Math.min(
-                  //   Math.max(expressionOof, 0),
-                  //   expressionLimitOof
-                  // );
-                  // currentVrm.expressionManager.setValue(
-                  //   VRMExpressionPresetName.Angry,
-                  //   expressionOof
-                  // );
                 }
 
                 // Look at camera is more efficient on blink
@@ -232,62 +224,42 @@ const TalkingAvatar = () => {
           console.log("The following error occurred: " + err.name);
         }
       );
-  }
+  };
 
   useEffect(() => {
+    // initial loading of avatar
     if (!containerRef.current) return;
     if (containerRef.current && containerRef.current.children.length > 0) {
       console.log("Model is already loaded.");
       return;
     }
+    loadModel("./vrms/VU-VRM-male.vrm");
+    setupRenderer();
+    startAnimation();
+    startBlinking();
 
-    loader.register((parser: any) => {
-      return new VRMLoaderPlugin(parser);
-    });
-
-    console.log(700, 500);
-    renderer = new THREE.WebGLRenderer({
-      alpha: true,
-      antialias: true,
-      powerPreference: "low-power",
-    });
-    renderer.setSize(700, 500);
-    renderer.setPixelRatio(window.devicePixelRatio);
-
-    camera.position.set(0, 1.5, 1.3);
-    /* 
-    const controls = new OrbitControls(camera, renderer.domElement);
-    controls.screenSpacePanning = true;
-    controls.target.set(0.0, 1.45, 0.0);
-    controls.update(); */
-
-    const light = new THREE.DirectionalLight(0xffffff);
-    light.position.set(1.0, 1.0, 1.0).normalize();
-    scene.add(light);
-
-    camera.add(lookAtTarget);
-
-    load("./vrms/VU-VRM-male.vrm");
-
-    function animate() {
-      requestAnimationFrame(animate);
-
-      const deltaTime = clock.getDelta();
-
-      if (currentVrm) {
-        currentVrm.update(deltaTime);
+    return () => {
+      if (renderer) {
+        renderer.dispose();
       }
-
-      renderer.render(scene, camera);
-    }
-
-    animate();
-
-    containerRef.current.appendChild(renderer.domElement);
+    };
   }, []);
 
   useEffect(() => {
-    micListener(); // Call micListener function
+    blinkInterval = setInterval(
+      startBlinking,
+      Math.round(Math.random() * 5000) + 1000
+    );
+
+    return () => {
+      if (blinkInterval) {
+        clearInterval(blinkInterval);
+      }
+    };
+  }, []);
+
+  useEffect(() => {
+    micListener();
   });
 
   return <div ref={containerRef} />;

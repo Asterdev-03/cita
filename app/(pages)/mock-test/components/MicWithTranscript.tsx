@@ -1,14 +1,13 @@
 "use client";
-
 import "regenerator-runtime";
 import { MessageCircleOff, Mic, MicOff } from "lucide-react";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useRef, useState, useCallback } from "react";
 
 interface MicWithTranscriptProps {
   setUserInput: (value: string) => void;
   transcript: string;
-  resetTranscript: any;
-  SpeechRecognition: any;
+  resetTranscript: () => void; // Change to correct type
+  SpeechRecognition: any; // Change to correct type if possible
   isListeningDisabled: boolean;
 }
 
@@ -20,10 +19,9 @@ const MicWithTranscript: React.FC<MicWithTranscriptProps> = ({
   isListeningDisabled,
 }) => {
   const [micOn, setMicOn] = useState<boolean>(false);
-
   const divRef = useRef<HTMLDivElement>(null);
 
-  function handleVoice(): void {
+  const handleVoice = useCallback(() => {
     if (!micOn) {
       setMicOn(true);
       SpeechRecognition.startListening({
@@ -35,20 +33,19 @@ const MicWithTranscript: React.FC<MicWithTranscriptProps> = ({
       setUserInput(transcript);
       SpeechRecognition.stopListening();
     }
-  }
+  }, [micOn, transcript, SpeechRecognition, setUserInput]);
 
-  function handleClear(): void {
+  const handleClear = useCallback(() => {
     SpeechRecognition.stopListening();
     resetTranscript();
     setMicOn(false);
-  }
+  }, [resetTranscript, SpeechRecognition]);
 
   useEffect(() => {
-    // Scroll to the bottom when the transcript incresses
     if (divRef.current) {
       divRef.current.scrollTop = divRef.current.scrollHeight;
     }
-  }, [transcript]); // Assuming transcript is a prop or state that changes
+  }, [transcript]);
 
   return (
     <div>

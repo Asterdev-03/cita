@@ -1,11 +1,11 @@
 "use client";
 
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useCallback } from "react";
 import { inter } from "@/lib/fonts";
 
 import MicWithTranscript from "./components/MicWithTranscript";
 import TalkingAvatar from "./components/TalkingAvatar";
-import TextToSpeech, { playVoice } from "./components/TextToSpeech";
+import { playVoice } from "./components/TextToSpeech";
 import WebCamera from "./components/WebCamera";
 
 import {
@@ -28,7 +28,7 @@ import SpeechRecognition, {
 
 const MockTestPage: React.FC = () => {
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
-  const [questions, setQuestions] = useState([]);
+  const [questions, setQuestions] = useState<string[]>([]);
   const [index, setIndex] = useState<number>(0);
   const initialTime: number = 600; // 10 minutes converted to seconds
   const [time, setTime] = useState<number>(initialTime);
@@ -43,105 +43,126 @@ const MockTestPage: React.FC = () => {
   useEffect(() => {
     let timer: NodeJS.Timeout;
 
-    if (startSession && time > 0) {
+    if (startSession && questions.length > 0 && time > 0) {
       timer = setInterval(() => {
         setTime((prevTime) => prevTime - 1);
       }, 1000);
     }
+
     return () => {
       clearInterval(timer);
     };
-  }, [startSession, time]);
+  }, [startSession, time, questions]);
 
-  const fetchQuestions = async () => {
+  const fetchQuestions = useCallback(async () => {
     const info = {
       resume: window.sessionStorage.getItem("resume"),
       job: window.sessionStorage.getItem("job"),
     };
-    const response = await fetch("/api/questions", {
-      method: "POST",
-      body: JSON.stringify(info),
-    });
-    if (response.status === 500) {
-      throw new Error("Failed to delete");
+
+    try {
+      const response = await fetch("/api/questions", {
+        method: "POST",
+        body: JSON.stringify(info),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to fetch questions");
+      }
+
+      const res = await response.json();
+      setQuestions(res.questions);
+      window.sessionStorage.setItem("interviewId", res.interviewId);
+
+      setIsListeningDisabled(true);
+      await playVoice(res.questions[index], () => {
+        console.log("stop");
+        setIsListeningDisabled(false);
+      });
+    } catch (error) {
+      console.error(error);
     }
+  }, [index]);
 
-    const questionsList = await response.json();
-    setQuestions(questionsList);
-
-    setIsListeningDisabled(true);
-    playVoice(questionsList[index], () => {
-      console.log("stop");
-      setIsListeningDisabled(false);
-    });
-  };
-
-  const evaluateScore = async () => {
+  const evaluateScore = useCallback(async () => {
     const info = {
-      interviewId: "cluvmdg3u000nul3ntchtxjl0",
+      interviewId: window.sessionStorage.getItem("interviewId"),
       userInputs: [...userInputs, userInput],
     };
-    const response = await fetch("/api/evaluatescore", {
-      method: "POST",
-      body: JSON.stringify(info),
-    });
-    if (response.status === 500) {
-      throw new Error("Failed to delete");
-    }
-  };
 
-  const formatTime = (seconds: number): string => {
+    try {
+      const response = await fetch("/api/evaluatescore", {
+        method: "POST",
+        body: JSON.stringify(info),
+      });
+
+      if (!response.ok) {
+        throw new Error("Failed to evaluate score");
+      }
+    } catch (error) {
+      console.error(error);
+    }
+  }, [userInput, userInputs]);
+
+  const formatTime = useCallback((seconds: number): string => {
     const minutes = Math.floor(seconds / 60);
     const remainingSeconds = seconds % 60;
-    const formattedMinutes = String(minutes).padStart(2, "0");
-    const formattedSeconds = String(remainingSeconds).padStart(2, "0");
-    return `${formattedMinutes}:${formattedSeconds}`;
-  };
+    return `${String(minutes).padStart(2, "0")}:${String(
+      remainingSeconds
+    ).padStart(2, "0")}`;
+  }, []);
 
-  function handleSessionChange(): void {
-    // setVideoStatus(false);
-    // setVoiceStatus(false);
+  const handleSessionChange = useCallback(() => {
     SpeechRecognition.stopListening();
     resetTranscript();
+
     if (startSession) {
       setIsModalOpen(true);
     } else {
       setStartSession(true);
       fetchQuestions();
     }
-  }
+  }, [fetchQuestions, resetTranscript, startSession]);
 
-  function onEndSession() {
+  const onEndSession = useCallback(() => {
     setIsModalOpen(false);
     setStartSession(false);
     setTime(initialTime);
     setQuestions([]);
+    setUserInputs([]);
+    setUserInput("");
     setIndex(0);
-  }
+  }, [initialTime]);
 
-  function handleClear(): void {
+  const handleClear = useCallback(() => {
     SpeechRecognition.stopListening();
     resetTranscript();
-  }
+  }, [resetTranscript]);
 
-  async function handleSend() {
+  const handleSend = useCallback(async () => {
     setIsListeningDisabled(true);
     setUserInputs([...userInputs, userInput]);
-    console.log(userInputs);
     handleClear();
+
     if (index < questions.length - 1) {
-      playVoice(questions[index + 1], () => {
+      await playVoice(questions[index + 1], () => {
         console.log("stop");
         setIsListeningDisabled(false);
       });
-      setIndex(index + 1);
+      setIndex((prevIndex) => prevIndex + 1);
     } else {
       onEndSession();
-      console.log(userInputs);
       evaluateScore();
-      // router.push("/result");
     }
-  }
+  }, [
+    evaluateScore,
+    handleClear,
+    index,
+    onEndSession,
+    questions,
+    userInput,
+    userInputs,
+  ]);
 
   return (
     <section
@@ -174,9 +195,9 @@ const MockTestPage: React.FC = () => {
         <div className="flex flex-col w-full border-2 rounded-2xl bg-white p-4 gap-y-2">
           <div className="flex gap-x-2">
             <div className="relative h-[450px] w-2/3 bg-gray-100 rounded-2xl overflow-hidden">
-              <TalkingAvatar />
+              <TalkingAvatar isUserSpeaking={isListeningDisabled} />
               <div className="absolute min-h-[50px] h-fit bottom-0 text-center w-full backdrop-blur-md bg-gray-50/50 p-4">
-                <p>{questions ? questions[index] : ""}</p>
+                <p>{questions[index] || ""}</p>
               </div>
             </div>
             <div className="h-[450px] w-1/3 bg-gray-100 rounded-2xl flex flex-col overflow-hidden">
@@ -207,7 +228,6 @@ const MockTestPage: React.FC = () => {
           </div>
         </div>
       </div>
-      <TextToSpeech />
       <Dialog
         open={isModalOpen}
         onOpenChange={(vis: boolean) => {
