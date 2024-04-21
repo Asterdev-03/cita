@@ -24,11 +24,17 @@ const TalkingAvatar: React.FC<TalkingAvatarProps> = ({ isUserSpeaking }) => {
   let currentVrm: any = undefined;
   let renderer: THREE.WebGLRenderer | null = null;
   let blinkInterval: ReturnType<typeof setInterval> | null = null;
+  let audioContext: AudioContext | null = null;
+  let analyser: AnalyserNode | null = null;
+  let mediaStream: MediaStream | null = null;
+  let timeoutId: NodeJS.Timeout | null = null;
 
   let mouthThreshold = 1;
   let mouthBoost = 10;
   let bodyThreshold = 15;
   let bodyMotion = 10;
+
+  const [vrm, setVrm] = useState<any>(null);
 
   const loadModel = (url: string) => {
     if (containerRef.current && containerRef.current.children.length > 0) {
@@ -46,6 +52,7 @@ const TalkingAvatar: React.FC<TalkingAvatarProps> = ({ isUserSpeaking }) => {
 
         currentVrm = gltf.userData.vrm;
         console.log(currentVrm);
+        setVrm(currentVrm);
         initializeAvatar();
       },
       (progress: any) => {
@@ -64,6 +71,7 @@ const TalkingAvatar: React.FC<TalkingAvatarProps> = ({ isUserSpeaking }) => {
       VRMHumanBoneName["Hips"]
     ).rotation.y = Math.PI;
     currentVrm.springBoneManager.reset();
+    setVrm(currentVrm);
 
     setupBoneRotations();
   };
@@ -81,6 +89,7 @@ const TalkingAvatar: React.FC<TalkingAvatarProps> = ({ isUserSpeaking }) => {
     currentVrm.humanoid.getNormalizedBoneNode(
       VRMHumanBoneName["LeftLowerArm"]
     ).rotation.z = 0.2;
+    setVrm(currentVrm);
   };
 
   const setupRenderer = () => {
@@ -112,6 +121,7 @@ const TalkingAvatar: React.FC<TalkingAvatarProps> = ({ isUserSpeaking }) => {
       const deltaTime = clock.getDelta();
       if (currentVrm) {
         currentVrm.update(deltaTime);
+        setVrm(currentVrm);
       }
       renderer.render(scene, camera);
     }
@@ -133,97 +143,65 @@ const TalkingAvatar: React.FC<TalkingAvatarProps> = ({ isUserSpeaking }) => {
     }
   };
 
-  const micListener = () => {
-    navigator.mediaDevices
-      .getUserMedia({
-        audio: true,
-      })
-      .then(
-        function (stream: MediaStream) {
-          let audioContext = new AudioContext();
-          let analyser = audioContext.createAnalyser();
-          let microphone = audioContext.createMediaStreamSource(stream);
+  const changeExpression = (lvl: number) => {
+    // Talk
+    let vowelDamp = 53;
+    let vowelMin = 12;
+    if (Math.floor(lvl / 10) % 2 === 0) {
+      currentVrm.expressionManager.setValue(VRMExpressionPresetName.Aa, 1);
+    } else {
+      currentVrm.expressionManager.setValue(VRMExpressionPresetName.Aa, 0);
+    }
 
-          analyser.smoothingTimeConstant = 0.5;
-          analyser.fftSize = 1024;
+    // Move body
+    // let damping = 750 / (bodyMotion / 10);
+    // let springback = 1.001;
 
-          // Create an AudioWorkletNode
-          audioContext.audioWorklet
-            .addModule("my-worklet-processor.js")
-            .then(() => {
-              const workletNode = new AudioWorkletNode(
-                audioContext,
-                "my-worklet-processor"
-              );
+    // if (avgVolume > 5) {
+    //   const boneNames = [
+    //     VRMHumanBoneName.Head,
+    //     VRMHumanBoneName.Neck,
+    //     VRMHumanBoneName.UpperChest,
+    //     VRMHumanBoneName.RightShoulder,
+    //     VRMHumanBoneName.LeftShoulder,
+    //   ];
+    //   boneNames.forEach((boneName) => {
+    //     const bone =
+    //       currentVrm.humanoid.getNormalizedBoneNode(boneName);
+    //     bone.rotation.x += (Math.random() - 0.5) / damping;
+    //     bone.rotation.x /= springback;
+    //     bone.rotation.y += (Math.random() - 0.5) / damping;
+    //     bone.rotation.y /= springback;
+    //     bone.rotation.z += (Math.random() - 0.5) / damping;
+    //     bone.rotation.z /= springback;
+    //   });
+    // }
 
-              workletNode.port.onmessage = function (event: MessageEvent) {
-                const { inputVolume } = event.data;
-                let inputVolumeAdjusted = inputVolume * 200000;
-                if (currentVrm !== undefined) {
-                  // Talk
-                  if (isUserSpeaking === true) {
-                    var vowelDamp = 53;
-                    var vowelMin = 12;
-                    if (inputVolumeAdjusted > mouthThreshold * 2) {
-                      currentVrm.expressionManager.setValue(
-                        VRMExpressionPresetName.Aa,
-                        ((inputVolumeAdjusted - vowelMin) / vowelDamp) *
-                          (mouthBoost / 10)
-                      );
-                    } else {
-                      currentVrm.expressionManager.setValue(
-                        VRMExpressionPresetName.Aa,
-                        0
-                      );
-                    }
-                  }
+    // Yay/oof expression drift
+    // expressionYay += (Math.random() - 0.5) / expressionEase;
+    // expressionYay = Math.min(
+    //   Math.max(expressionYay, 0),
+    //   expressionLimitYay
+    // );
+    // currentVrm.expressionManager.setValue(
+    //   VRMExpressionPresetName.Relaxed,
+    //   expressionYay
+    // );
 
-                  // Move body
-                  var damping = 750 / (bodyMotion / 10);
-                  var springback = 1.001;
+    // expressionOof += (Math.random() - 0.5) / expressionEase;
+    // expressionOof = Math.min(
+    //   Math.max(expressionOof, 0),
+    //   expressionLimitOof
+    // );
+    // currentVrm.expressionManager.setValue(
+    //   VRMExpressionPresetName.Angry,
+    //   expressionOof
+    // );
 
-                  if (inputVolumeAdjusted > 1 * bodyThreshold) {
-                    const boneNames = [
-                      VRMHumanBoneName.Head,
-                      VRMHumanBoneName.Neck,
-                      VRMHumanBoneName.UpperChest,
-                      VRMHumanBoneName.RightShoulder,
-                      VRMHumanBoneName.LeftShoulder,
-                    ];
-                    boneNames.forEach((boneName) => {
-                      const bone =
-                        currentVrm.humanoid.getNormalizedBoneNode(boneName);
-                      bone.rotation.x += (Math.random() - 0.5) / damping;
-                      bone.rotation.x /= springback;
-                      bone.rotation.y += (Math.random() - 0.5) / damping;
-                      bone.rotation.y /= springback;
-                      bone.rotation.z += (Math.random() - 0.5) / damping;
-                      bone.rotation.z /= springback;
-                    });
-                  }
-                }
-
-                // Look at camera is more efficient on blink
-                lookAtTarget.position.x = camera.position.x;
-                lookAtTarget.position.y =
-                  (camera.position.y - camera.position.y - camera.position.y) /
-                    2 +
-                  0.5;
-              };
-
-              // Connect the microphone to the worklet node
-              microphone.connect(workletNode);
-              // Connect the worklet node to the destination (speakers)
-              workletNode.connect(audioContext.destination);
-            })
-            .catch((error: Error) => {
-              console.error("Error loading worklet:", error);
-            });
-        },
-        function (err: Error) {
-          console.log("The following error occurred: " + err.name);
-        }
-      );
+    // Look at camera is more efficient on blink
+    lookAtTarget.position.x = camera.position.x;
+    lookAtTarget.position.y =
+      (camera.position.y - camera.position.y - camera.position.y) / 2 + 0.5;
   };
 
   useEffect(() => {
@@ -259,8 +237,75 @@ const TalkingAvatar: React.FC<TalkingAvatarProps> = ({ isUserSpeaking }) => {
   }, []);
 
   useEffect(() => {
-    micListener();
-  });
+    const startListening = () => {
+      // Initialize audio context and analyzer
+      audioContext = new AudioContext();
+      analyser = audioContext.createAnalyser();
+      analyser.fftSize = 256;
+
+      // Get microphone input
+      navigator.mediaDevices
+        .getUserMedia({ audio: true })
+        .then((stream) => {
+          mediaStream = stream;
+          const microphone = audioContext!.createMediaStreamSource(stream);
+          microphone.connect(analyser!);
+          const dataArray = new Uint8Array(analyser!.frequencyBinCount);
+          currentVrm = vrm;
+
+          const updateVoiceLevel = () => {
+            if (!isUserSpeaking) return;
+
+            // Get voice level data
+            analyser!.getByteFrequencyData(dataArray);
+            // Calculate average volume level
+            const avgVolume =
+              dataArray.reduce((acc, val) => acc + val, 0) / dataArray.length;
+            const lvl = avgVolume;
+            console.log("Voice level:", lvl);
+            changeExpression(lvl);
+
+            // Schedule next check after 300ms
+            timeoutId = setTimeout(updateVoiceLevel, 100);
+          };
+
+          // Start updating voice level
+          updateVoiceLevel();
+        })
+        .catch((error) => {
+          console.error("Error accessing microphone:", error);
+        });
+    };
+
+    const stopListening = () => {
+      // Stop listening to voice level
+      if (vrm) {
+        vrm.expressionManager.setValue(VRMExpressionPresetName.Aa, 0);
+      }
+      if (mediaStream) {
+        mediaStream.getTracks().forEach((track) => track.stop());
+      }
+      if (audioContext) {
+        audioContext.close();
+      }
+      // Clear timeout
+      if (timeoutId) {
+        clearTimeout(timeoutId);
+      }
+    };
+
+    // Start or stop listening based on isUserSpeaking
+    if (isUserSpeaking) {
+      startListening();
+    } else {
+      stopListening();
+    }
+
+    // Clean up function
+    return () => {
+      stopListening();
+    };
+  }, [isUserSpeaking]);
 
   return <div ref={containerRef} />;
 };
