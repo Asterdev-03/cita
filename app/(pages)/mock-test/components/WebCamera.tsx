@@ -6,7 +6,19 @@ import { Avatar } from "@/components/ui/avatar";
 import { Camera, CameraOff, SquareUserRound } from "lucide-react";
 import * as faceapi from "face-api.js";
 
-const WebCamera = () => {
+interface WebcamProps {
+  setTotalDetectionTime: (value: number) => void;
+  totalDetectionTime: number;
+  setEmotionValues: (value: any) => void;
+  emotionValues: object;
+}
+
+const WebCamera: React.FC<WebcamProps> = ({
+  setTotalDetectionTime,
+  totalDetectionTime,
+  setEmotionValues,
+  emotionValues,
+}) => {
   const [videoStatus, setVideoStatus] = useState<boolean>(false);
 
   const webcamRef = useRef<Webcam>(null);
@@ -48,7 +60,14 @@ const WebCamera = () => {
           .withFaceLandmarks()
           .withFaceExpressions();
 
-        console.log(detections);
+        if (detections.length === 0) return;
+
+        console.log(detections[0].expressions);
+        setEmotionValues(detections[0].expressions);
+
+        //set emotion score values
+        // setEmotionValues(..., {type: emotion_val + detection_val})
+        setTotalDetectionTime(totalDetectionTime + 1);
 
         // DRAW YOU FACE IN CANVAS
 

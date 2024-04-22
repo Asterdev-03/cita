@@ -5,9 +5,7 @@ async function query(data) {
   const response = await fetch(
     "https://api-inference.huggingface.co/models/Minej/bert-base-personality",
     {
-      headers: {
-        headers: { Authorization: `Bearer ${API_TOKEN}` },
-      },
+      headers: { Authorization: `Bearer ${API_TOKEN}` },
       method: "POST",
       body: JSON.stringify(data),
     }

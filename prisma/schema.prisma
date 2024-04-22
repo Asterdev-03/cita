@@ -29,7 +29,19 @@ model Interview {
   userId       String
   questions    String[]
   userAnswers  String[]
-  score        Int
   resume       String
   jobTitle     String
+  totalScore        Int
+  angry        Float
+  sad          Float
+  neutral      Float
+  happy        Float
+  surprise     Float
+  extroversion     Float
+  neurotism           Float
+  agreeableness       Float
+  conscientiousness        Float
+  openness             Float
+  similarityScoreList     Float[]
+  similarityScore         Float
 }

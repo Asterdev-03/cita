@@ -37,6 +37,14 @@ const MockTestPage: React.FC = () => {
   const [userInputs, setUserInputs] = useState<string[]>([]);
   const [isListeningDisabled, setIsListeningDisabled] =
     useState<boolean>(false);
+  const [emotionValues, setEmotionValues] = useState({
+    angry: 0,
+    sad: 0,
+    neutral: 0,
+    happy: 0,
+    surprise: 0,
+  });
+  const [totalDetectionTime, setTotalDetectionTime] = useState(0);
 
   const { transcript, resetTranscript } = useSpeechRecognition();
   const router = useRouter();
@@ -89,6 +97,8 @@ const MockTestPage: React.FC = () => {
     const info = {
       interviewId: window.sessionStorage.getItem("interviewId"),
       userInputs: [...userInputs, userInput],
+      emotionValues: emotionValues,
+      totalDetectionTime: totalDetectionTime,
     };
 
     try {
@@ -126,6 +136,7 @@ const MockTestPage: React.FC = () => {
   }, [fetchQuestions, resetTranscript, startSession]);
 
   const onEndSession = useCallback(() => {
+    setIsListeningDisabled(false);
     setIsModalOpen(false);
     setStartSession(false);
     setTime(initialTime);
@@ -203,7 +214,12 @@ const MockTestPage: React.FC = () => {
             </div>
             <div className="h-[450px] w-1/3 bg-gray-100 rounded-2xl flex flex-col overflow-hidden">
               <div className="relative h-4/5 flex items-center justify-center">
-                <WebCamera />
+                <WebCamera
+                  setTotalDetectionTime={setTotalDetectionTime}
+                  setEmotionValues={setEmotionValues}
+                  totalDetectionTime={totalDetectionTime}
+                  emotionValues={emotionValues}
+                />
               </div>
               <div className="flex items-center justify-center grow gap-x-5"></div>
             </div>

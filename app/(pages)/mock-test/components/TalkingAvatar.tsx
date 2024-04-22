@@ -262,7 +262,7 @@ const TalkingAvatar: React.FC<TalkingAvatarProps> = ({ isUserSpeaking }) => {
             const avgVolume =
               dataArray.reduce((acc, val) => acc + val, 0) / dataArray.length;
             const lvl = avgVolume;
-            console.log("Voice level:", lvl);
+            // console.log("Voice level:", lvl);
             changeExpression(lvl);
 
             // Schedule next check after 300ms
