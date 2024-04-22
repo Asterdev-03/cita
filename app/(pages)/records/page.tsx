@@ -9,13 +9,12 @@ import { Ghost, Loader2, Plus, Trash } from "lucide-react";
 import Skeleton from "react-loading-skeleton";
 import { format } from "date-fns";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
-import DetailsDrawer from "../dashboard/components/DetailsDrawer";
 
 // export const metadata: Metadata = {
 //   title: "Records",
 // };
 
-const DashboardPage: React.FC = () => {
+const RecordsPage: React.FC = () => {
   const [currentDeletingFile, setCurrentDeletingFile] = useState<string | null>(
     null
   );
@@ -74,7 +73,16 @@ const DashboardPage: React.FC = () => {
               key={file.id}
               className="col-span-1 flex flex-col divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg border border-1 border-gray-100"
             >
-              <DetailsDrawer file={file} />
+              <div className="pt-6 px-6 flex w-full items-center justify-between space-x-6">
+                <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-r from-zinc-200 to-neutral-200" />
+                <div className="flex-1 text-ellipsis overflow-hidden">
+                  {/* "text-ellipsis overflow-hidden" is same as "truncate" */}
+                  <h3 className="text-lg font-medium text-zinc-900 truncate">
+                    {file.name}
+                  </h3>
+                </div>
+              </div>
+
               <div className="px-6 mt-4 grid grid-cols-2 place-items-center py-2 gap-6 text-xs text-zinc-500">
                 <div className="flex items-center gap-2">
                   <Plus className="h-4 w-4" />
@@ -142,4 +150,4 @@ const DashboardPage: React.FC = () => {
   );
 };
 
-export default DashboardPage;
+export default RecordsPage;
