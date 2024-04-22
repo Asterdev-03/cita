@@ -11,7 +11,6 @@ import Skeleton from "react-loading-skeleton";
 import { format } from "date-fns";
 import { Calendar } from "@/components/ui/calendar";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
-import DetailsDrawer from "./components/DetailsDrawer";
 import BarChart from "./components/BarChart";
 
 // export const metadata: Metadata = {
@@ -78,7 +77,15 @@ const DashboardPage: React.FC = () => {
               key={file.id}
               className="flex flex-col divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg border border-1 border-gray-100"
             >
-              <DetailsDrawer file={file} />
+              <div className="pt-6 px-6 flex w-full items-center justify-between space-x-6">
+                <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-r from-zinc-200 to-neutral-200" />
+                <div className="flex-1 text-ellipsis overflow-hidden">
+                  {/* "text-ellipsis overflow-hidden" is same as "truncate" */}
+                  <h3 className="text-lg font-medium text-zinc-900 truncate">
+                    {file.name}
+                  </h3>
+                </div>
+              </div>
 
               <div className="px-6 mt-4 grid grid-cols-2 place-items-center py-2 gap-6 text-xs text-zinc-500">
                 <div className="flex items-center gap-2">
@@ -190,7 +197,7 @@ const DashboardPage: React.FC = () => {
           </div>
 
           {/* History */}
-          <div className="lg:col-span-2">
+          <div className="lg:col-span-3">
             <h2 className="my-6 font-semibold text-gray-900 text-lg">
               History
             </h2>

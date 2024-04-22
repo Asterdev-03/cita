@@ -77,7 +77,7 @@ const LandingPage: React.FC = () => {
                 />
               </div>
               <div className="col-span-2 place-self-center">
-                <h2 className="lg:text-[70px] sm:text-[50px] xs:text-[35px] text-[25px] leading-normal sm:leading-[1.3] font-black bg-gradient-to-r from-emerald-500 to-purple-600 bg-clip-text text-transparent">
+                <h2 className="lg:text-[65px] sm:text-[50px] xs:text-[35px] text-[25px] leading-normal sm:leading-[1.3] font-black bg-gradient-to-r from-emerald-500 to-purple-600 bg-clip-text text-transparent">
                   Prepare your tailored resume
                 </h2>
               </div>
@@ -97,7 +97,7 @@ const LandingPage: React.FC = () => {
                 />
               </div>
               <div className="col-span-2 place-self-center">
-                <h2 className="lg:text-[70px] sm:text-[50px] xs:text-[35px] text-[25px] leading-normal sm:leading-[1.3] font-black bg-gradient-to-r from-sky-400 to-purple-600 bg-clip-text text-transparent">
+                <h2 className="lg:text-[65px] sm:text-[50px] xs:text-[35px] text-[25px] leading-normal sm:leading-[1.3] font-black bg-gradient-to-r from-sky-400 to-purple-600 bg-clip-text text-transparent">
                   Upload to CITA powered by Gemini
                 </h2>
               </div>
@@ -116,7 +116,7 @@ const LandingPage: React.FC = () => {
                 />
               </div>
               <div className="col-span-2 place-self-center">
-                <h2 className="lg:text-[70px] sm:text-[50px] xs:text-[35px] text-[25px] leading-normal sm:leading-[1.3] font-black bg-gradient-to-r from-amber-500 to-purple-600 bg-clip-text text-transparent">
+                <h2 className="lg:text-[65px] sm:text-[50px] xs:text-[35px] text-[25px] leading-normal sm:leading-[1.3] font-black bg-gradient-to-r from-amber-500 to-purple-600 bg-clip-text text-transparent">
                   Try mock interviews
                 </h2>
               </div>
