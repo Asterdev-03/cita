@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Phrase Similarity Calculator</title>
+    <script>
+      function calculateSimilarity() {
+        var phrase1 = document.getElementById("phrase1").value;
+        var phrase2 = document.getElementById("phrase2").value;
+
+        // Calculate similarity percentage
+        var similarity = calculateLevenshteinDistance(phrase1, phrase2);
+        var similarityPercentage = similarityToPercentage(similarity);
+
+        // Display the result
+        document.getElementById("result").innerHTML =
+          "The similarity percentage is: " + similarityPercentage + "%";
+      }
+
+      function calculateLevenshteinDistance(phrase1, phrase2) {
+        // Levenshtein Distance calculation
+        var distance = [];
+        for (var i = 0; i <= phrase1.length; i++) {
+          distance[i] = [];
+          distance[i][0] = i;
+        }
+        for (var j = 0; j <= phrase2.length; j++) {
+          distance[0][j] = j;
+        }
+        for (var i = 1; i <= phrase1.length; i++) {
+          for (var j = 1; j <= phrase2.length; j++) {
+            var cost = phrase1.charAt(i - 1) === phrase2.charAt(j - 1) ? 0 : 1;
+            distance[i][j] = Math.min(
+              distance[i - 1][j] + 1, // Deletion
+              distance[i][j - 1] + 1, // Insertion
+              distance[i - 1][j - 1] + cost // Substitution
+            );
+          }
+        }
+        return distance[phrase1.length][phrase2.length];
+      }
+
+      function similarityToPercentage(similarity) {
+        var maxLength = Math.max(
+          document.getElementById("phrase1").value.length,
+          document.getElementById("phrase2").value.length
+        );
+        var percentage = ((maxLength - similarity) / maxLength) * 100;
+        return percentage.toFixed(2);
+      }
+    </script>
+  </head>
+  <body>
+    <h1>Phrase Similarity Calculator</h1>
+    <label for="phrase1">Phrase 1:</label>
+    <input type="text" id="phrase1" placeholder="Enter phrase 1" /><br />
+    <label for="phrase2">Phrase 2:</label>
+    <input type="text" id="phrase2" placeholder="Enter phrase 2" /><br />
+    <button onclick="calculateSimilarity()">Calculate Similarity</button>
+    <p id="result"></p>
+  </body>
+</html>

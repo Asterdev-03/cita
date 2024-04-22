@@ -1,49 +1,115 @@
 "use client";
 
+import { useRef, useState } from "react";
+import Webcam from "react-webcam";
 import { Avatar } from "@/components/ui/avatar";
 import { Camera, CameraOff, SquareUserRound } from "lucide-react";
-import { useEffect, useRef, useState } from "react";
-import Webcam from "react-webcam";
+import * as faceapi from "face-api.js";
 
 const WebCamera = () => {
   const [videoStatus, setVideoStatus] = useState<boolean>(false);
 
   const webcamRef = useRef<Webcam>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   function handleVideo(): void {
     setVideoStatus((prevVideoStatus) => !prevVideoStatus);
   }
 
-  async function startVideoStream(): Promise<void> {
-    if (
-      webcamRef.current &&
-      webcamRef.current.video &&
-      webcamRef.current.video.readyState === 4
-    ) {
-      const video = webcamRef.current.video;
-      const videoWidth = webcamRef.current.video.videoWidth;
-      const videoHeight = webcamRef.current.video.videoHeight;
+  const videoConstraints = {
+    width: 1280,
+    height: 720,
+    facingMode: "user",
+  };
 
-      // Set video to be displayed based on the actual width and height of the direct video from camera
-      webcamRef.current.video.width = videoWidth;
-      webcamRef.current.video.height = videoHeight;
-    }
-  }
+  // LOAD MODELS FROM FACE API
 
-  useEffect(() => {
-    startVideoStream();
-  }, []);
+  const loadModelsWhenCamera = () => {
+    // console.log(webcamRef.current?.video);
+    Promise.all([
+      // THIS FOR FACE DETECT AND LOAD FROM YOU PUBLIC/MODELS DIRECTORY
+      faceapi.nets.tinyFaceDetector.loadFromUri("/models"),
+      faceapi.nets.faceLandmark68Net.loadFromUri("/models"),
+      faceapi.nets.faceRecognitionNet.loadFromUri("/models"),
+      faceapi.nets.faceExpressionNet.loadFromUri("/models"),
+    ]).then(() => {
+      expressionDetect();
+    });
+  };
+
+  const expressionDetect = () => {
+    setInterval(async () => {
+      if (webcamRef.current && webcamRef.current.video) {
+        const detections = await faceapi
+          .detectAllFaces(
+            webcamRef.current?.video!!,
+            new faceapi.TinyFaceDetectorOptions()
+          )
+          .withFaceLandmarks()
+          .withFaceExpressions();
+
+        console.log(detections);
+
+        // DRAW YOU FACE IN CANVAS
+
+        // ensure that the webcam video is fully loaded before attempting to create a canvas from it
+        if (webcamRef.current && webcamRef.current.video) {
+          faceapi.createCanvasFromMedia(webcamRef.current?.video!!);
+        }
+
+        if (canvasRef.current) {
+          const displaySize = {
+            width: webcamRef.current.video?.videoWidth,
+            height: webcamRef.current.video?.videoHeight,
+          };
+
+          // setting the dimensions of canvas
+          canvasRef.current.width = displaySize.width;
+          canvasRef.current.height = displaySize.height;
+
+          // giving the canvas and the size to the api
+          faceapi.matchDimensions(canvasRef.current, displaySize);
+
+          const resized = faceapi.resizeResults(detections, displaySize);
+
+          const context = canvasRef.current.getContext("2d");
+
+          if (context) {
+            context.clearRect(
+              0,
+              0,
+              canvasRef.current.width,
+              canvasRef.current.height
+            );
+            faceapi.draw.drawDetections(canvasRef.current, resized);
+            faceapi.draw.drawFaceLandmarks(canvasRef.current, resized);
+            faceapi.draw.drawFaceExpressions(canvasRef.current, resized);
+          }
+        }
+      }
+    }, 1000);
+  };
 
   return (
     <div className="relative flex flex-col gap-5 items-center justify-center">
       {videoStatus ? (
-        <Webcam
-          ref={webcamRef}
-          muted={true}
-          audio={false}
-          className="h-full w-full overflow-hidden object-cover"
-          style={{ transform: "scaleX(-1)" }}
-        />
+        <div className="relative h-full w-full overflow-hidden object-cover">
+          <Webcam
+            ref={webcamRef}
+            audio={false}
+            mirrored={false}
+            muted={true}
+            // videoConstraints={videoConstraints}
+            disablePictureInPicture={true}
+            className="h-full w-full overflow-hidden object-cover"
+            style={{ transform: "scaleX(-1)" }}
+            onUserMedia={loadModelsWhenCamera}
+            onUserMediaError={() =>
+              console.error("Error accessing video or video access disbled")
+            }
+          />
+          <canvas ref={canvasRef} className="absolute inset-0 w-full h-full" />
+        </div>
       ) : (
         <Avatar className="size-max justify-center items-center">
           <SquareUserRound size={200} strokeWidth={1} absoluteStrokeWidth />

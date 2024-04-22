@@ -35,7 +35,8 @@ const MockTestPage: React.FC = () => {
   const [startSession, setStartSession] = useState<boolean>(false);
   const [userInput, setUserInput] = useState<string>("");
   const [userInputs, setUserInputs] = useState<string[]>([]);
-  const [isListeningDisabled, setIsListeningDisabled] = useState<boolean>(true);
+  const [isListeningDisabled, setIsListeningDisabled] =
+    useState<boolean>(false);
 
   const { transcript, resetTranscript } = useSpeechRecognition();
   const router = useRouter();
