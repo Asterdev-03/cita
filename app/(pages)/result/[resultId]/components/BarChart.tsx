@@ -26,8 +26,8 @@ export default function BarChart() {
           labels: labels,
           datasets: [
             {
+              label: "Emotions",
               data: weight,
-              //   label: "Emotions",
               fill: true,
               backgroundColor: [
                 "rgba(255, 99, 132, 0.2)",

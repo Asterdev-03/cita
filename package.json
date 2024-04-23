@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@google/generative-ai": "^0.2.0",
+    "@kinde-oss/kinde-auth-nextjs": "^2.2.4",
     "@pixiv/three-vrm": "^2.0.10",
     "@prisma/client": "^5.9.1",
     "@radix-ui/react-avatar": "^1.0.4",

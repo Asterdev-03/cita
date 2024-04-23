@@ -12,7 +12,7 @@ const colors = {
   },
 };
 
-export default function BarChart() {
+const LineChart = () => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -70,4 +70,6 @@ export default function BarChart() {
       <canvas id="myChart" ref={canvasRef} height={100} />
     </div>
   );
-}
+};
+
+export default LineChart;

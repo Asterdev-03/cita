@@ -22,7 +22,7 @@ const WebCamera: React.FC<WebcamProps> = ({
   const [videoStatus, setVideoStatus] = useState<boolean>(false);
 
   const webcamRef = useRef<Webcam>(null);
-  const canvasRef = useRef<HTMLCanvasElement>(null);
+  const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   function handleVideo(): void {
     setVideoStatus((prevVideoStatus) => !prevVideoStatus);
@@ -117,11 +117,10 @@ const WebCamera: React.FC<WebcamProps> = ({
             ref={webcamRef}
             audio={false}
             mirrored={false}
-            muted={true}
             // videoConstraints={videoConstraints}
             disablePictureInPicture={true}
-            className="h-full w-full overflow-hidden object-cover"
-            style={{ transform: "scaleX(-1)" }}
+            className="inset-0 w-full h-full"
+            // style={{ transform: "scaleX(-1)" }}
             onUserMedia={loadModelsWhenCamera}
             onUserMediaError={() =>
               console.error("Error accessing video or video access disbled")
