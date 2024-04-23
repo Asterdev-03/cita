@@ -4,13 +4,17 @@ import { useEffect, useRef } from "react";
 import { Chart } from "chart.js/auto";
 import { Trophy } from "lucide-react";
 
-export default function DoughnutChart() {
+interface DoughnutChartProps {
+  score: number;
+}
+
+export default function DoughnutChart({ score }: DoughnutChartProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   useEffect(() => {
     if (canvasRef.current) {
       const ctx = canvasRef.current.getContext("2d");
       if (ctx) {
-        const weight = [60.0, 100 - 60.0];
+        const weight = [score, 100 - score];
 
         const labels = ["Final Score", "Need for Improvemnent"];
 
@@ -55,7 +59,7 @@ export default function DoughnutChart() {
         <Trophy className="text-yellow-900" />
         <h2 className="font-semibold text-gray-900 leading-loose">
           Final Score {"   "}:{"   "}
-          <span className="text-3xl font-bold text-purple-700">60%</span>
+          <span className="text-3xl font-bold text-purple-700">{score}%</span>
         </h2>
       </div>
     </>

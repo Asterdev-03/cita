@@ -4,35 +4,32 @@ import { useEffect, useRef } from "react";
 import { Chart } from "chart.js/auto";
 import { Trophy } from "lucide-react";
 
-export default function BarChart() {
+interface BarChartProps {
+  weight: number[];
+}
+
+export default function BarChart({ weight }: BarChartProps) {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
   useEffect(() => {
     if (canvasRef.current) {
       const ctx = canvasRef.current.getContext("2d");
       if (ctx) {
-        const weight = [5, 20, 10, 40, 80, 22, 40];
+        // const weight = [5, 20, 10, 40, 80, 22, 40];
+        console.log(weight);
 
-        const labels = [
-          "Angry",
-          "Disgusted",
-          "Fearful",
-          "Happy",
-          "Neutral",
-          "Sad",
-          "Surprised",
-        ];
+        const labels = ["Angry", "Happy", "Sad", "Surprised", "Neutral"];
 
         const data = {
           labels: labels,
           datasets: [
             {
-              label: "Emotions",
+              //   label: "Emotions",
               data: weight,
               fill: true,
               backgroundColor: [
                 "rgba(255, 99, 132, 0.2)",
-                "rgba(255, 159, 64, 0.2)",
-                "rgba(255, 205, 86, 0.2)",
+                // "rgba(255, 159, 64, 0.2)",
+                // "rgba(255, 205, 86, 0.2)",
                 "rgba(75, 192, 192, 0.2)",
                 "rgba(54, 162, 235, 0.2)",
                 "rgba(153, 102, 255, 0.2)",
@@ -41,8 +38,8 @@ export default function BarChart() {
               hoverOffset: 4,
               borderColor: [
                 "rgb(255, 99, 132)",
-                "rgb(255, 159, 64)",
-                "rgb(255, 205, 86)",
+                // "rgb(255, 159, 64)",
+                // "rgb(255, 205, 86)",
                 "rgb(75, 192, 192)",
                 "rgb(54, 162, 235)",
                 "rgb(153, 102, 255)",
@@ -69,7 +66,7 @@ export default function BarChart() {
         };
       }
     }
-  }, []);
+  }, [weight]);
 
   return (
     <div className="relative">

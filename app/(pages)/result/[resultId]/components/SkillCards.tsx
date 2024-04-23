@@ -7,13 +7,29 @@ import {
   PackageOpen,
 } from "lucide-react";
 
-export default function SkillCards() {
+interface SkillCardsProps {
+  correction: number;
+  extroversion: number;
+  neuroticism: number;
+  agreebleness: number;
+  conscientiousness: number;
+  openness: number;
+}
+
+export default function SkillCards({
+  correction,
+  extroversion,
+  neuroticism,
+  agreebleness,
+  conscientiousness,
+  openness,
+}: SkillCardsProps) {
   return (
     <div className="grid grid-cols-2 md:grid-cols-3 gap-6">
       <div className="p-4 flex flex-col justify-around space-y-3 rounded-2xl shadow-sm bg-white">
         <SpellCheck size={50} />
         <h2 className="text-4xl font-bold text-purple-900">
-          <span>90</span>
+          <span>{correction}</span>
         </h2>
         <p className="font-sans text-lg font-medium text-gray-500">
           Sentence Correction
@@ -23,7 +39,7 @@ export default function SkillCards() {
       <div className="p-4 flex flex-col justify-around space-y-3 rounded-2xl shadow-sm bg-white">
         <Annoyed size={50} />
         <h2 className="text-4xl font-bold text-purple-900">
-          <span>20</span>
+          <span>{extroversion}</span>
         </h2>
         <p className="font-sans text-lg font-medium text-gray-500">
           Extroversion
@@ -33,7 +49,7 @@ export default function SkillCards() {
       <div className="p-4 flex flex-col justify-around space-y-3 rounded-2xl shadow-sm bg-white">
         <Meh size={50} />
         <h2 className="text-4xl font-bold text-purple-900">
-          <span>2680</span>
+          <span>{neuroticism}</span>
         </h2>
         <p className="font-sans text-lg font-medium text-gray-500">
           Neuroticism
@@ -43,7 +59,7 @@ export default function SkillCards() {
       <div className="p-4 flex flex-col justify-around space-y-3 rounded-2xl shadow-sm bg-white">
         <HeartHandshake size={50} />
         <h2 className="text-4xl font-bold text-purple-900">
-          <span>2680</span>
+          <span>{agreebleness}</span>
         </h2>
         <p className="font-sans text-lg font-medium text-gray-500">
           Agreebleness
@@ -53,7 +69,7 @@ export default function SkillCards() {
       <div className="p-4 flex flex-col justify-around space-y-3 rounded-2xl shadow-sm bg-white">
         <Brain size={50} />
         <h2 className="text-4xl font-bold text-purple-900">
-          <span>2680</span>
+          <span>{conscientiousness}</span>
         </h2>
         <p className="font-sans text-lg font-medium text-gray-500">
           Conscientiousness
@@ -63,7 +79,7 @@ export default function SkillCards() {
       <div className="p-4 flex flex-col justify-around space-y-3 rounded-2xl shadow-sm bg-white">
         <PackageOpen size={50} />
         <h2 className="text-4xl font-bold text-purple-900">
-          <span>2680</span>
+          <span>{openness}</span>
         </h2>
         <p className="font-sans text-lg font-medium text-gray-500">Openness</p>
       </div>

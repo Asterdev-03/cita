@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     if (key === undefined) {
       const interview = await prismadb.interview.create({
         data: {
-          userId: "clva1j2w700005e52wxxdytne",
+          userId: "clvcszrqk00001wpkl3jb4vzk",
           questions: text,
           resume: resume,
           jobTitle: job,
@@ -59,7 +59,7 @@ export async function POST(req: Request) {
           sad: 0,
           happy: 0,
           neutral: 0,
-          surprise: 0,
+          surprised: 0,
           extroversion: 0,
           agreeableness: 0,
           conscientiousness: 0,
@@ -94,7 +94,7 @@ export async function POST(req: Request) {
 
       const interview = await prismadb.interview.create({
         data: {
-          userId: "clva1j2w700005e52wxxdytne",
+          userId: "clvcszrqk00001wpkl3jb4vzk",
           questions: sentencesArray,
           resume: resume,
           jobTitle: job,
@@ -104,7 +104,7 @@ export async function POST(req: Request) {
           sad: 0,
           happy: 0,
           neutral: 0,
-          surprise: 0,
+          surprised: 0,
           extroversion: 0,
           agreeableness: 0,
           conscientiousness: 0,

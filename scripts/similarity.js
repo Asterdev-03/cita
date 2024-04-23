@@ -1,11 +1,10 @@
-require("dotenv").config();
-
 async function query(data) {
-  const API_TOKEN = process.env.TOKEN;
   const response = await fetch(
-    "https://api-inference.huggingface.co/models/sentence-transformers/all-mpnet-base-v2",
+    "https://api-inference.huggingface.co/models/annakotarba/sentence-similarity",
     {
-      headers: { Authorization: `Bearer ${API_TOKEN}` },
+      headers: {
+        Authorization: "Bearer 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",
+      },
       method: "POST",
       body: JSON.stringify(data),
     }
@@ -16,11 +15,8 @@ async function query(data) {
 
 query({
   inputs: {
-    source_sentence:
-      "The mischievous cat playfully swatted at the dangling string, its green eyes sparkling with delight.",
-    sentences: [
-      "The aroma of freshly baked bread wafted from the kitchen, enticing everyone to gather around the table.",
-    ],
+    source_sentence: "That is a happy person",
+    sentences: ["That is a happy dog"],
   },
 }).then((response) => {
   console.log(JSON.stringify(response));

@@ -42,9 +42,9 @@ const MockTestPage: React.FC = () => {
     sad: 0,
     neutral: 0,
     happy: 0,
-    surprise: 0,
+    surprised: 0,
   });
-  const [totalDetectionTime, setTotalDetectionTime] = useState(0);
+  const [totalDetectionTime, setTotalDetectionTime] = useState<number>(0);
 
   const { transcript, resetTranscript } = useSpeechRecognition();
   const router = useRouter();
@@ -144,6 +144,7 @@ const MockTestPage: React.FC = () => {
     setUserInputs([]);
     setUserInput("");
     setIndex(0);
+    router.push("/result/" + window.sessionStorage.getItem("interviewId"));
   }, [initialTime]);
 
   const handleClear = useCallback(() => {
@@ -217,8 +218,6 @@ const MockTestPage: React.FC = () => {
                 <WebCamera
                   setTotalDetectionTime={setTotalDetectionTime}
                   setEmotionValues={setEmotionValues}
-                  totalDetectionTime={totalDetectionTime}
-                  emotionValues={emotionValues}
                 />
               </div>
               <div className="flex items-center justify-center grow gap-x-5"></div>

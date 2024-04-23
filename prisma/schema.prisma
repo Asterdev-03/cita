@@ -36,7 +36,7 @@ model Interview {
   sad          Float
   neutral      Float
   happy        Float
-  surprise     Float
+  surprised    Float
   extroversion     Float
   neurotism           Float
   agreeableness       Float

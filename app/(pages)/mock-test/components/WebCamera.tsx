@@ -6,23 +6,27 @@ import { Avatar } from "@/components/ui/avatar";
 import { Camera, CameraOff, SquareUserRound } from "lucide-react";
 import * as faceapi from "face-api.js";
 
+interface EmotionValues {
+  angry: number;
+  sad: number;
+  neutral: number;
+  happy: number;
+  surprised: number;
+}
+
 interface WebcamProps {
-  setTotalDetectionTime: (value: number) => void;
-  totalDetectionTime: number;
+  setTotalDetectionTime: (value: any) => void;
   setEmotionValues: (value: any) => void;
-  emotionValues: object;
 }
 
 const WebCamera: React.FC<WebcamProps> = ({
   setTotalDetectionTime,
-  totalDetectionTime,
   setEmotionValues,
-  emotionValues,
 }) => {
   const [videoStatus, setVideoStatus] = useState<boolean>(false);
 
   const webcamRef = useRef<Webcam>(null);
-  const canvasRef = useRef<HTMLCanvasElement | null>(null);
+  const canvasRef = useRef<HTMLCanvasElement>(null);
 
   function handleVideo(): void {
     setVideoStatus((prevVideoStatus) => !prevVideoStatus);
@@ -62,12 +66,31 @@ const WebCamera: React.FC<WebcamProps> = ({
 
         if (detections.length === 0) return;
 
-        console.log(detections[0].expressions);
-        setEmotionValues(detections[0].expressions);
+        const newValues = detections[0].expressions;
+        // console.log(newValues);
 
         //set emotion score values
-        // setEmotionValues(..., {type: emotion_val + detection_val})
-        setTotalDetectionTime(totalDetectionTime + 1);
+        setEmotionValues((prevValues: EmotionValues) => {
+          // Create a copy of previous values
+          const updatedValues: EmotionValues = { ...prevValues };
+
+          // Iterate over the keys of newValues and update corresponding values in updatedValues
+          for (const key in newValues) {
+            if (
+              newValues.hasOwnProperty(key) &&
+              updatedValues.hasOwnProperty(key)
+            ) {
+              // Type assertion for the key
+              const emotionKey = key as keyof EmotionValues;
+              updatedValues[emotionKey] += newValues[emotionKey];
+            }
+          }
+          return updatedValues;
+        });
+        setTotalDetectionTime((prevTime: number) => {
+          // console.log(prevTime);
+          return prevTime + 1;
+        });
 
         // DRAW YOU FACE IN CANVAS
 
@@ -118,9 +141,14 @@ const WebCamera: React.FC<WebcamProps> = ({
             audio={false}
             mirrored={false}
             // videoConstraints={videoConstraints}
-            disablePictureInPicture={true}
-            className="inset-0 w-full h-full"
+            // disablePictureInPicture={true}
+            // className="inset-0 w-full h-full"
             // style={{ transform: "scaleX(-1)" }}
+            muted={true}
+            // videoConstraints={videoConstraints}
+            disablePictureInPicture={true}
+            className="h-full w-full overflow-hidden object-cover"
+            style={{ transform: "scaleX(-1)" }}
             onUserMedia={loadModelsWhenCamera}
             onUserMediaError={() =>
               console.error("Error accessing video or video access disbled")
