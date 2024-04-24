@@ -49,7 +49,7 @@ export async function POST(req: Request) {
     if (key === undefined) {
       const interview = await prismadb.interview.create({
         data: {
-          userId: "clvcszrqk00001wpkl3jb4vzk",
+          userId: "clvddenli0000aprd2cajdjph",
           questions: text,
           resume: resume,
           jobTitle: job,
@@ -74,7 +74,7 @@ export async function POST(req: Request) {
 
       return NextResponse.json(res);
     } else {
-      const prompt = `This is my resume: ${resume} and the job description: ${job}. Generate 10 common interview questions based on my resume and the job description provided. Each question must be in a single line without any bulletins. Avoid using bulletins or numbering. DO NOT classify the questions as technical questions or HR questions, All questions should be in a shuffled manner. Provide questions separated by \\n.`;
+      const prompt = `This is my resume: ${resume} and the job description: ${job}. Generate 10 common and simple interview questions based on my resume and the job description provided. Each question must be in a single line without any bulletins. Avoid using bulletins or numbering. DO NOT classify the questions as technical questions or HR questions. Provide questions separated by \\n.`;
 
       const genAI = new GoogleGenerativeAI(`${key}`);
 
@@ -94,7 +94,7 @@ export async function POST(req: Request) {
 
       const interview = await prismadb.interview.create({
         data: {
-          userId: "clvcszrqk00001wpkl3jb4vzk",
+          userId: "clvddenli0000aprd2cajdjph",
           questions: sentencesArray,
           resume: resume,
           jobTitle: job,

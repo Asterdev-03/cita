@@ -22,10 +22,11 @@ export async function generateMetadata({
 
 export default async function Page({ params }: PageProps) {
   const { resultId } = params;
+  console.log(resultId);
 
   return (
     <section className={`${inter.className}`}>
-      <ResultPage />
+      <ResultPage resultId={resultId} />
     </section>
   );
 }

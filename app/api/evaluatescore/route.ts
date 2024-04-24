@@ -13,7 +13,7 @@ const getAIInputs = async (interviewId: string) => {
     const questionList = interview?.questions;
     const resume = interview?.resume;
     const job = interview?.jobTitle;
-    const prompt = `This is my resume: ${resume} and the job description: ${job}. These are the list of questions asked in the interview: ${questionList}. Generate common interview answers based on the questions provided. Each answer must be in a single line without any bulletins. Avoid using bulletins or numbering. Provide answers separated by \\n.`;
+    const prompt = `This is my resume: ${resume} and the job description: ${job}. These are the list of questions asked in the interview: ${questionList}. Generate simple interview answers based on the questions provided. Each answer must be in a single line without any bulletins. Avoid using bulletins or numbering. Provide answers separated by \\n.`;
 
     const genAI = new GoogleGenerativeAI(`${process.env.API_KEY}`);
 

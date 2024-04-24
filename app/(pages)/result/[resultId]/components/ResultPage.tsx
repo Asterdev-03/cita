@@ -11,6 +11,7 @@ import { useCallback, useEffect, useState } from "react";
 import DoughnutChart from "./DoughnutChart";
 import BarChart from "./BarChart";
 import SkillCards from "./SkillCards";
+import { Rss } from "lucide-react";
 
 interface Emotions {
   extroversion: number;
@@ -28,7 +29,11 @@ interface Score {
   emotions: Emotions;
 }
 
-const ResultPage: React.FC = () => {
+interface ResultPageProps {
+  resultId: string;
+}
+
+const ResultPage: React.FC<ResultPageProps> = ({ resultId }) => {
   const [scores, setScores] = useState<Score>({
     date: new Date("2023-12-21T13:51:06.661+00:00"),
     totalscore: 0,
@@ -44,12 +49,10 @@ const ResultPage: React.FC = () => {
   });
 
   const fetchScores = useCallback(async () => {
-    const intid = window.sessionStorage.getItem("interviewId");
-
     try {
       const response = await fetch("/api/getscore", {
         method: "POST",
-        body: JSON.stringify(intid),
+        body: JSON.stringify(resultId),
       });
 
       if (!response.ok) {
