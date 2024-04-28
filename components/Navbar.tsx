@@ -18,10 +18,17 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
-export default function Navbar() {
+export default async function Navbar() {
+  const { isAuthenticated } = getKindeServerSession();
+
+  let auth = true;
+  if (!(await isAuthenticated())) {
+    auth = false;
+  }
   return (
-    <nav className="w-full h-20 sticky z-30 inset-x-0 top-0 border-b border-gray-200 bg-white/70 backdrop-blur-xl transition-all">
+    <nav className="w-full h-20 sticky z-30 inset-x-0 px-4 top-0 border-b border-gray-200 bg-white/70 backdrop-blur-xl transition-all">
       <MaxWidthWrapper>
         <div className="flex h-20 items-center justify-between">
           <Link
@@ -44,29 +51,31 @@ export default function Navbar() {
             <span className={`${pacifico.className} text-[#5a338a]`}>A.</span>
           </Link>
 
-          {/* TODO: Avatar must only be shown when signed in */}
-          <div className="sm:hidden">
-            <DropdownMenu>
-              <DropdownMenuTrigger>
-                <Avatar>
-                  <AvatarImage src="https://github.com/shadcn.png" />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent>
-                <DropdownMenuLabel>My Account</DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem className="cursor-pointer">
-                  Edit profile
-                </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer">
-                  Signout
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </div>
+          {/* Avatar must only be shown when signed in */}
+          {auth ? (
+            <div className="sm:hidden">
+              <DropdownMenu>
+                <DropdownMenuTrigger>
+                  <Avatar>
+                    <AvatarImage src="https://github.com/shadcn.png" />
+                    <AvatarFallback>CN</AvatarFallback>
+                  </Avatar>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent>
+                  <DropdownMenuLabel>My Account</DropdownMenuLabel>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem className="cursor-pointer">
+                    Edit profile
+                  </DropdownMenuItem>
+                  <DropdownMenuItem className="cursor-pointer">
+                    Signout
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            </div>
+          ) : null}
 
-          {/* TODO: Links must only be shown when not signed in */}
+          {/* Links must only be shown when not signed in */}
           <div className="hidden sm:flex items-center space-x-4">
             <Link
               href="/"
@@ -78,32 +87,39 @@ export default function Navbar() {
             >
               <h4>Pricing</h4>
             </Link>
-            <LoginLink
-              className={buttonVariants({
-                variant: "ghost",
-                size: "sm",
-                className: "text-[15px] text-gray-900 font-semibold",
-              })}
-            >
-              <h4>Sign in</h4>
-            </LoginLink>
-            <LoginLink
-              className={buttonVariants({
-                variant: "default",
-                size: "sm",
-              })}
-            >
-              Get started <ArrowRight className="ml-1.5 h-5 w-5" />
-            </LoginLink>
-            <LogoutLink
-              className={buttonVariants({
-                variant: "ghost",
-                size: "sm",
-                className: "text-[15px] text-gray-900 font-semibold",
-              })}
-            >
-              <h4>Sign out</h4>
-            </LogoutLink>
+
+            {auth ? (
+              <LogoutLink
+                className={buttonVariants({
+                  variant: "ghost",
+                  size: "sm",
+                  className: "text-[15px] text-gray-900 font-semibold",
+                })}
+              >
+                <h4>Sign out</h4>
+              </LogoutLink>
+            ) : (
+              <>
+                <LoginLink
+                  className={buttonVariants({
+                    variant: "ghost",
+                    size: "sm",
+                    className: "text-[15px] text-gray-900 font-semibold",
+                  })}
+                >
+                  <h4>Sign in</h4>
+                </LoginLink>
+
+                <RegisterLink
+                  className={buttonVariants({
+                    variant: "default",
+                    size: "sm",
+                  })}
+                >
+                  Get started <ArrowRight className="ml-1.5 h-5 w-5" />
+                </RegisterLink>
+              </>
+            )}
           </div>
         </div>
       </MaxWidthWrapper>

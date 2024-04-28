@@ -1,6 +1,7 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
+import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
 import { inter } from "@/lib/fonts";
 
 import MicWithTranscript from "./components/MicWithTranscript";
@@ -27,6 +28,18 @@ import SpeechRecognition, {
 } from "react-speech-recognition";
 
 const MockTestPage: React.FC = () => {
+  const { transcript, resetTranscript } = useSpeechRecognition();
+  const router = useRouter();
+
+  // get the session of logged in user
+  const { user, isAuthenticated, accessToken } = useKindeBrowserClient();
+
+  // Check if the user is already logged in the browser
+  console.log(isAuthenticated);
+  // if (isAuthenticated === false) {
+  //   router.push("/auth-callback?origin=dashboard");
+  // }
+
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [questions, setQuestions] = useState<string[]>([]);
   const [index, setIndex] = useState<number>(0);
@@ -45,9 +58,6 @@ const MockTestPage: React.FC = () => {
     surprised: 0,
   });
   const [totalDetectionTime, setTotalDetectionTime] = useState<number>(0);
-
-  const { transcript, resetTranscript } = useSpeechRecognition();
-  const router = useRouter();
 
   useEffect(() => {
     let timer: NodeJS.Timeout;
