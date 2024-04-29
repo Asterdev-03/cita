@@ -1,13 +1,11 @@
 "use client";
 
 import React, { useEffect, useState, useCallback } from "react";
-import { useKindeBrowserClient } from "@kinde-oss/kinde-auth-nextjs";
-import { inter } from "@/lib/fonts";
 
-import MicWithTranscript from "./components/MicWithTranscript";
-import TalkingAvatar from "./components/TalkingAvatar";
-import { playVoice } from "./components/TextToSpeech";
-import WebCamera from "./components/WebCamera";
+import MicWithTranscript from "./MicWithTranscript";
+import TalkingAvatar from "./TalkingAvatar";
+import { playVoice } from "./TextToSpeech";
+import WebCamera from "./WebCamera";
 
 import {
   Dialog,
@@ -27,18 +25,9 @@ import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
 
-const MockTestPage: React.FC = () => {
+const InterviewPage: React.FC = () => {
   const { transcript, resetTranscript } = useSpeechRecognition();
   const router = useRouter();
-
-  // get the session of logged in user
-  const { user, isAuthenticated, accessToken } = useKindeBrowserClient();
-
-  // Check if the user is already logged in the browser
-  console.log(isAuthenticated);
-  // if (isAuthenticated === false) {
-  //   router.push("/auth-callback?origin=dashboard");
-  // }
 
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [questions, setQuestions] = useState<string[]>([]);
@@ -188,9 +177,7 @@ const MockTestPage: React.FC = () => {
   ]);
 
   return (
-    <section
-      className={`${inter.className} min-h-screen bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-100`}
-    >
+    <section className="min-h-screen bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-100">
       <div className="flex flex-row p-5 gap-4">
         <div className="w-1/4 p-4 border-2 rounded-2xl bg-zinc-50">
           <div className="grid grid-cols-1 h-full">
@@ -299,4 +286,4 @@ const MockTestPage: React.FC = () => {
   );
 };
 
-export default MockTestPage;
+export default InterviewPage;

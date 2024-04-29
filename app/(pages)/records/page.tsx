@@ -16,7 +16,7 @@ export default async function Page() {
   // Check if the user is already logged in the browser
   const user = await getUser();
   if (!user || !user.id) {
-    redirect("/auth-callback?origin=dashboard");
+    redirect("/auth-callback?origin=records");
   }
 
   // If logged in browser, also check the database for the user

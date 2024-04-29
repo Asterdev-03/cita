@@ -1,13 +1,8 @@
-import { Metadata } from "next";
 import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 import { redirect } from "next/navigation";
 import prismadb from "@/lib/prismadb";
 import { inter } from "@/lib/fonts";
-import SetupPage from "./components/SetupPage";
-
-export const metadata: Metadata = {
-  title: "Setup",
-};
+import InterviewPage from "./components/InterviewPage";
 
 export default async function Page() {
   // get the session of logged in user
@@ -16,7 +11,7 @@ export default async function Page() {
   // Check if the user is already logged in the browser
   const user = await getUser();
   if (!user || !user.id) {
-    redirect("/auth-callback?origin=setup");
+    redirect("/auth-callback?origin=interview");
   }
 
   // If logged in browser, also check the database for the user
@@ -30,8 +25,8 @@ export default async function Page() {
   }
 
   return (
-    <section className={`${inter.className}`}>
-      <SetupPage />
+    <section className={inter.className}>
+      <InterviewPage />
     </section>
   );
 }

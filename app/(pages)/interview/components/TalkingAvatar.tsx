@@ -38,7 +38,7 @@ const TalkingAvatar: React.FC<TalkingAvatarProps> = ({ isUserSpeaking }) => {
 
   const loadModel = (url: string) => {
     if (containerRef.current && containerRef.current.children.length > 0) {
-      console.log("Model is already loaded.");
+      // console.log("Model is already loaded.");
       return;
     }
     const loader = new GLTFLoader();
@@ -51,7 +51,7 @@ const TalkingAvatar: React.FC<TalkingAvatarProps> = ({ isUserSpeaking }) => {
         scene.add(gltf.scene);
 
         currentVrm = gltf.userData.vrm;
-        console.log(currentVrm);
+        // console.log(currentVrm);
         setVrm(currentVrm);
         initializeAvatar();
       },
@@ -99,7 +99,7 @@ const TalkingAvatar: React.FC<TalkingAvatarProps> = ({ isUserSpeaking }) => {
       antialias: true,
       powerPreference: "low-power",
     });
-    console.log(700, 500);
+    // console.log(700, 500);
     renderer.setSize(700, 500);
     renderer.setPixelRatio(window.devicePixelRatio);
 
@@ -208,7 +208,7 @@ const TalkingAvatar: React.FC<TalkingAvatarProps> = ({ isUserSpeaking }) => {
     // initial loading of avatar
     if (!containerRef.current) return;
     if (containerRef.current && containerRef.current.children.length > 0) {
-      console.log("Model is already loaded.");
+      // console.log("Model is already loaded.");
       return;
     }
     loadModel("./vrms/VU-VRM-male.vrm");
