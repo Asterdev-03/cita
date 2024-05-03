@@ -1,6 +1,7 @@
 import prismadb from "@/lib/prismadb";
 import { NextResponse } from "next/server";
 import { GoogleGenerativeAI } from "@google/generative-ai";
+import { getKindeServerSession } from "@kinde-oss/kinde-auth-nextjs/server";
 
 const getQuestion = async () => {
   try {
@@ -32,6 +33,8 @@ const getQuestion = async () => {
 };
 
 export async function POST(req: Request) {
+  const { getUser } = getKindeServerSession();
+  const user = await getUser();
   try {
     const body = await req.json();
     // const { resume, job } = body;
@@ -49,7 +52,7 @@ export async function POST(req: Request) {
     if (key === undefined) {
       const interview = await prismadb.interview.create({
         data: {
-          userId: "clvddenli0000aprd2cajdjph",
+          userId: "jhfghdkfjnkjk",
           questions: text,
           resume: resume,
           jobTitle: job,
@@ -94,7 +97,7 @@ export async function POST(req: Request) {
 
       const interview = await prismadb.interview.create({
         data: {
-          userId: "clvddenli0000aprd2cajdjph",
+          userId: user?.id,
           questions: sentencesArray,
           resume: resume,
           jobTitle: job,

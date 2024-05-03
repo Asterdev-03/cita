@@ -112,7 +112,7 @@ const SetupPage: React.FC = () => {
       </div>
       <div className="flex justify-center">
         <Link
-          href="/mock-test"
+          href="/interview"
           className={buttonVariants({
             size: "lg",
             variant: "default",
