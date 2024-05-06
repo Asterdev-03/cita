@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import Link from "next/link";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Button, buttonVariants } from "@/components/ui/button";
@@ -11,56 +11,47 @@ import Skeleton from "react-loading-skeleton";
 import { format } from "date-fns";
 import LineChart from "./LineChart";
 
+type InterviewData = {
+  id: string;
+  name: string;
+  createdAt: string;
+  score: number;
+};
+
 const DashboardPage: React.FC = () => {
   const [currentDeletingFile, setCurrentDeletingFile] = useState<string | null>(
     null
   );
 
-  // TODO: Delete api request for files
+  const [interviews, setInterviews] = useState<InterviewData[] | null>(null);
+  const [scoreList, setScoreList] = useState<number[]>([]);
 
-  // Dummy data
-  const files = [
-    {
-      id: "123abc",
-      name: "Interview for Google",
-      key: "123abc",
-      createdAt: "2023-12-21T13:51:06.661+00:00",
-      updatedAt: "2023-12-28T13:51:06.661+00:00",
-    },
-    {
-      id: "1234abcd",
-      name: "Meta interview",
-      key: "1234abcd",
-      createdAt: "2023-12-22T13:51:06.661+00:00",
-      updatedAt: "2023-12-28T13:51:06.661+00:00",
-    },
-    {
-      id: "12345adcde",
-      name: "TCS SDE interview",
-      key: "12345adcde",
-      createdAt: "2023-12-19T13:51:06.661+00:00",
-      updatedAt: "2023-12-28T13:51:06.661+00:00",
-    },
-    {
-      id: "123456adcdef",
-      name: "CITA internship mock",
-      key: "123456adcdef",
-      createdAt: "2023-12-29T13:51:06.661+00:00",
-      updatedAt: "2023-12-28T13:51:06.661+00:00",
-    },
-    {
-      id: "1234567abcdefg",
-      name: "Sample interview",
-      key: "1234567abcdefg",
-      createdAt: "2023-12-30T13:51:06.661+00:00",
-      updatedAt: "2023-12-28T13:51:06.661+00:00",
-    },
-  ];
+  const fetchInterviews = async () => {
+    try {
+      const response = await fetch("/api/interviews");
+      if (!response.ok) {
+        throw new Error("Failed to fetch questions");
+      }
+
+      const res = await response.json();
+      console.log(res);
+      setInterviews(res);
+      const scoresArray = res.map((interview: any) => interview.score);
+      setScoreList(scoresArray);
+      console.log(scoresArray);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchInterviews();
+  }, []);
 
   const displayFiles = () => {
     return (
       <ul className="my-2 p-3 grid gap-6 grid-cols-2 lg:grid-cols-3 border-2 shadow-lg rounded-lg">
-        {files!
+        {interviews!
           .sort(
             (a, b) =>
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -160,7 +151,7 @@ const DashboardPage: React.FC = () => {
 
           {/* Charts */}
           <h2 className="my-6 font-semibold text-gray-900 text-lg">Overview</h2>
-          <LineChart />
+          <LineChart scores={scoreList} />
         </div>
 
         {/* This calender renders in large and small screen */}
@@ -190,7 +181,7 @@ const DashboardPage: React.FC = () => {
         {/* History */}
         <div className="lg:col-span-3">
           <h2 className="my-6 font-semibold text-gray-900 text-lg">History</h2>
-          {files && files?.length !== 0
+          {interviews && interviews?.length !== 0
             ? displayFiles()
             : // : isLoading
               // ? displayLoading()

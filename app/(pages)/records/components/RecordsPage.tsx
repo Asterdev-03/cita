@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import MaxWidthWrapper from "@/components/MaxWidthWrapper";
 import { Button } from "@/components/ui/button";
 import BreadcrumbNav from "@/components/BreadcrumbNav";
@@ -8,56 +8,42 @@ import { Ghost, Loader2, Plus, Trash } from "lucide-react";
 import Skeleton from "react-loading-skeleton";
 import { format } from "date-fns";
 
+type InterviewData = {
+  id: string;
+  name: string;
+  createdAt: string;
+  score: number;
+};
+
 const RecordsPage: React.FC = () => {
   const [currentDeletingFile, setCurrentDeletingFile] = useState<string | null>(
     null
   );
+  const [interviews, setInterviews] = useState<InterviewData[] | null>(null);
 
-  // TODO: Delete request for files
+  const fetchInterviews = async () => {
+    try {
+      const response = await fetch("/api/interviews");
+      if (!response.ok) {
+        throw new Error("Failed to fetch questions");
+      }
 
-  // Dummy files
-  const files = [
-    {
-      id: "123",
-      name: "file 1",
-      key: "123",
-      createdAt: "2023-12-21T13:51:06.661+00:00",
-      updatedAt: "2023-12-28T13:51:06.661+00:00",
-    },
-    {
-      id: "1234",
-      name: "ndjnythntsrdhnrnt",
-      key: "1234",
-      createdAt: "2023-12-22T13:51:06.661+00:00",
-      updatedAt: "2023-12-28T13:51:06.661+00:00",
-    },
-    {
-      id: "12345",
-      name: "dbfdbsfefasfaewfwfa",
-      key: "12345",
-      createdAt: "2023-12-19T13:51:06.661+00:00",
-      updatedAt: "2023-12-28T13:51:06.661+00:00",
-    },
-    {
-      id: "123456",
-      name: "fse",
-      key: "123456",
-      createdAt: "2023-12-29T13:51:06.661+00:00",
-      updatedAt: "2023-12-28T13:51:06.661+00:00",
-    },
-    {
-      id: "1234567",
-      name: "sfbnaewiuneujniofjp",
-      key: "1234567",
-      createdAt: "2023-12-30T13:51:06.661+00:00",
-      updatedAt: "2023-12-28T13:51:06.661+00:00",
-    },
-  ];
+      const res = await response.json();
+      console.log(res);
+      setInterviews(res);
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
+  useEffect(() => {
+    fetchInterviews();
+  }, []);
 
   const displayFiles = () => {
     return (
       <ul className="my-8 grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3">
-        {files!
+        {interviews!
           .sort(
             (a, b) =>
               new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()
@@ -133,7 +119,7 @@ const RecordsPage: React.FC = () => {
       </div>
 
       {/* Display all user history */}
-      {files && files?.length !== 0
+      {interviews && interviews?.length !== 0
         ? displayFiles()
         : // : isLoading
           // ? displayLoading()

@@ -1,0 +1,9 @@
+Name: Aswin K
+
+Skills: C, C++, Java, Python, HTML, CSS, Javascript, MERN Stack, MySQL, MongoDB, Self Management, Time Management, Project Planning
+
+Professional Experience: 
+1. Blueway Trading Company, Web Developer
+2. GTech MuLearn, Volunteer
+
+Projects: Quiz Web App ,Portfolio Website ,Discord Bot ,Endless Platform Jumping Game 

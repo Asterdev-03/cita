@@ -109,6 +109,7 @@ const InterviewPage: React.FC = () => {
       if (!response.ok) {
         throw new Error("Failed to evaluate score");
       }
+      onEndSession();
     } catch (error) {
       console.error(error);
     }
@@ -163,7 +164,6 @@ const InterviewPage: React.FC = () => {
       });
       setIndex((prevIndex) => prevIndex + 1);
     } else {
-      onEndSession();
       evaluateScore();
     }
   }, [

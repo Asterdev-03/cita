@@ -12,7 +12,11 @@ const colors = {
   },
 };
 
-const LineChart = () => {
+interface LineChartProps {
+  scores: number[];
+}
+
+const LineChart: React.FC<LineChartProps> = ({ scores }) => {
   const canvasRef = useRef<HTMLCanvasElement | null>(null);
 
   useEffect(() => {
@@ -24,15 +28,10 @@ const LineChart = () => {
         gradient.addColorStop(0.65, colors.purple.quarter);
         gradient.addColorStop(1, colors.purple.zero);
 
-        const weight = [60.0, 60.2, 59.1, 61.4, 59.9];
-
-        const labels = [
-          "Interview 1",
-          "Interview 2",
-          "Interview 3",
-          "Interview 4",
-          "Interview 5",
-        ];
+        const labels = Array.from(
+          { length: scores.length },
+          (_, index) => `Interview ${index + 1}`
+        );
 
         const data = {
           labels: labels,
@@ -40,7 +39,7 @@ const LineChart = () => {
             {
               backgroundColor: gradient,
               label: "Last 5 interview scores",
-              data: weight,
+              data: scores,
               fill: true,
               borderWidth: 2,
               borderColor: colors.purple.default,
@@ -63,7 +62,7 @@ const LineChart = () => {
         };
       }
     }
-  }, []);
+  }, [scores]);
 
   return (
     <div className="relative h-full w-full">

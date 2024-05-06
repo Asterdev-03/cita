@@ -27,11 +27,11 @@ export async function POST(req: Request) {
       ],
       correction: interview.similarityScore,
       emotions: {
-        extroversion: Math.round(interview.extroversion),
-        neuroticism: Math.round(interview.neurotism),
-        agreebleness: Math.round(interview.agreeableness),
-        conscientiousness: Math.round(interview.conscientiousness),
-        openness: Math.round(interview.openness),
+        extroversion: interview.extroversion,
+        neuroticism: interview.neurotism,
+        agreebleness: interview.agreeableness,
+        conscientiousness: interview.conscientiousness,
+        openness: interview.openness,
       },
     };
 
