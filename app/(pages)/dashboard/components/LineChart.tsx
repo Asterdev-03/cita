@@ -38,7 +38,7 @@ const LineChart: React.FC<LineChartProps> = ({ scores }) => {
           datasets: [
             {
               backgroundColor: gradient,
-              label: "Last 5 interview scores",
+              label: "Interview scores",
               data: scores,
               fill: true,
               borderWidth: 2,

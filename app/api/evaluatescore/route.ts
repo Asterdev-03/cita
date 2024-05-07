@@ -161,7 +161,7 @@ export async function POST(req: Request) {
 
     const AIInputs = await getAIInputs(interviewId);
 
-    // await loadModels();
+    await loadModels();
 
     for (let i = 0; i < userInputs.length; i++) {
       let similarityResult = await similarityDetectionWithRetry(

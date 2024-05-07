@@ -26,7 +26,7 @@ export default async function Page() {
 
   return (
     <section className={inter.className}>
-      <InterviewPage />
+      <InterviewPage user={user?.given_name} />
     </section>
   );
 }

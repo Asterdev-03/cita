@@ -24,11 +24,17 @@ import { useRouter } from "next/navigation";
 import SpeechRecognition, {
   useSpeechRecognition,
 } from "react-speech-recognition";
+import Skeleton from "react-loading-skeleton";
 
-const InterviewPage: React.FC = () => {
+interface InterviewPageProps {
+  user: any;
+}
+
+const InterviewPage: React.FC<InterviewPageProps> = ({ user }) => {
   const { transcript, resetTranscript } = useSpeechRecognition();
   const router = useRouter();
 
+  const [isLoading, setIsLoading] = useState(false);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const [questions, setQuestions] = useState<string[]>([]);
   const [index, setIndex] = useState<number>(0);
@@ -93,6 +99,7 @@ const InterviewPage: React.FC = () => {
   }, [index]);
 
   const evaluateScore = useCallback(async () => {
+    setIsLoading(true);
     const info = {
       interviewId: window.sessionStorage.getItem("interviewId"),
       userInputs: [...userInputs, userInput],
@@ -176,113 +183,129 @@ const InterviewPage: React.FC = () => {
     userInputs,
   ]);
 
+  const displayLoading = () => (
+    <>
+      <Skeleton height={60} className="my-2" count={5} enableAnimation />
+      <>The Score is Being Evaluated .....</>
+      <Skeleton height={60} className="my-2" count={5} enableAnimation />
+    </>
+  );
+
   return (
-    <section className="min-h-screen bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-100">
-      <div className="flex flex-row p-5 gap-4">
-        <div className="w-1/4 p-4 border-2 rounded-2xl bg-zinc-50">
-          <div className="grid grid-cols-1 h-full">
-            <h2 className="font-[1000] text-[50px]">Hello Ken,</h2>
-            <p className="text-xl">
-              You are being interviewed for <br />
-              <span className="font-black text-left text-[40px] text-purple-800 leading-10">
-                React Developer
-              </span>
-            </p>
-            <div>
-              <h3 className="font-semi-bold text-lg">Time elapsed:</h3>
-              <h4 className="font-black text-[50px]">{formatTime(time)}</h4>
-            </div>
-            <button
-              className={`p-3 ${
-                startSession ? `bg-red-500` : `bg-green-500 hover:bg-red-400`
-              } transition duration-300 text-white rounded-full`}
-              onClick={handleSessionChange}
-            >
-              {startSession ? "End Session" : "Start Session"}
-            </button>
-          </div>
-        </div>
-        <div className="flex flex-col w-full border-2 rounded-2xl bg-white p-4 gap-y-2">
-          <div className="flex gap-x-2">
-            <div className="relative h-[450px] w-2/3 bg-gray-100 rounded-2xl overflow-hidden">
-              <TalkingAvatar isUserSpeaking={isListeningDisabled} />
-              <div className="absolute min-h-[50px] h-fit bottom-0 text-center w-full backdrop-blur-md bg-gray-50/50 p-4">
-                <p>{questions[index] || ""}</p>
+    <>
+      {isLoading ? (
+        displayLoading()
+      ) : (
+        <section className="min-h-screen bg-gradient-to-r from-pink-50 via-purple-50 to-indigo-100">
+          <div className="flex flex-row p-5 gap-4">
+            <div className="w-1/4 p-4 border-2 rounded-2xl bg-zinc-50">
+              <div className="grid grid-cols-1 h-full">
+                <h2 className="font-[1000] text-[50px]">Hello {user},</h2>
+                <p className="text-xl">
+                  You are being interviewed <br />
+                  <span className="font-black text-left text-[40px] text-purple-800 leading-10">
+                    Now
+                  </span>
+                </p>
+                <div>
+                  <h3 className="font-semi-bold text-lg">Time elapsed:</h3>
+                  <h4 className="font-black text-[50px]">{formatTime(time)}</h4>
+                </div>
+                <button
+                  className={`p-3 ${
+                    startSession
+                      ? `bg-red-500`
+                      : `bg-green-500 hover:bg-red-400`
+                  } transition duration-300 text-white rounded-full`}
+                  onClick={handleSessionChange}
+                >
+                  {startSession ? "End Session" : "Start Session"}
+                </button>
               </div>
             </div>
-            <div className="h-[450px] w-1/3 bg-gray-100 rounded-2xl flex flex-col overflow-hidden">
-              <div className="relative h-4/5 flex items-center justify-center">
-                <WebCamera
-                  setTotalDetectionTime={setTotalDetectionTime}
-                  setEmotionValues={setEmotionValues}
-                />
+            <div className="flex flex-col w-full border-2 rounded-2xl bg-white p-4 gap-y-2">
+              <div className="flex gap-x-2">
+                <div className="relative h-[450px] w-2/3 bg-gray-100 rounded-2xl overflow-hidden">
+                  <TalkingAvatar isUserSpeaking={isListeningDisabled} />
+                  <div className="absolute min-h-[50px] h-fit bottom-0 text-center w-full backdrop-blur-md bg-gray-50/50 p-4">
+                    <p>{questions[index] || ""}</p>
+                  </div>
+                </div>
+                <div className="h-[450px] w-1/3 bg-gray-100 rounded-2xl flex flex-col overflow-hidden">
+                  <div className="relative h-4/5 flex items-center justify-center">
+                    <WebCamera
+                      setTotalDetectionTime={setTotalDetectionTime}
+                      setEmotionValues={setEmotionValues}
+                    />
+                  </div>
+                  <div className="flex items-center justify-center grow gap-x-5"></div>
+                </div>
               </div>
-              <div className="flex items-center justify-center grow gap-x-5"></div>
+              <div className="grid grid-cols-12 gap-x-2">
+                <div className="col-span-11 w-full">
+                  <MicWithTranscript
+                    setUserInput={setUserInput}
+                    transcript={transcript}
+                    resetTranscript={resetTranscript}
+                    SpeechRecognition={SpeechRecognition}
+                    isListeningDisabled={isListeningDisabled}
+                  />
+                </div>
+                <div className="flex col-span-1s justify-center items-center">
+                  <button
+                    className="h-11 w-11 flex justify-center items-center bg-zinc-500 hover:bg-zinc-700 transition duration-300 rounded-full text-white"
+                    onClick={handleSend}
+                  >
+                    <SendHorizontal absoluteStrokeWidth />
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
-          <div className="grid grid-cols-12 gap-x-2">
-            <div className="col-span-11 w-full">
-              <MicWithTranscript
-                setUserInput={setUserInput}
-                transcript={transcript}
-                resetTranscript={resetTranscript}
-                SpeechRecognition={SpeechRecognition}
-                isListeningDisabled={isListeningDisabled}
-              />
-            </div>
-            <div className="flex col-span-1s justify-center items-center">
-              <button
-                className="h-11 w-11 flex justify-center items-center bg-zinc-500 hover:bg-zinc-700 transition duration-300 rounded-full text-white"
-                onClick={handleSend}
-              >
-                <SendHorizontal absoluteStrokeWidth />
-              </button>
-            </div>
-          </div>
-        </div>
-      </div>
-      <Dialog
-        open={isModalOpen}
-        onOpenChange={(vis: boolean) => {
-          if (!vis) {
-            setIsModalOpen(vis);
-          }
-        }}
-      >
-        <DialogContent className="w-2/3">
-          <DialogHeader>
-            <DialogTitle>End Session</DialogTitle>
-            <DialogDescription>
-              Do you want to end the session ?
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              onClick={() => {
-                setIsModalOpen(false);
-              }}
-              className={buttonVariants({
-                size: "lg",
-                variant: "custom1",
-                className: "mt-5 rounded-xl",
-              })}
-            >
-              Cancel
-            </Button>
-            <Link
-              href="/result"
-              className={buttonVariants({
-                size: "lg",
-                variant: "default",
-                className: "mt-5 rounded-xl",
-              })}
-            >
-              End
-            </Link>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
-    </section>
+          <Dialog
+            open={isModalOpen}
+            onOpenChange={(vis: boolean) => {
+              if (!vis) {
+                setIsModalOpen(vis);
+              }
+            }}
+          >
+            <DialogContent className="w-2/3">
+              <DialogHeader>
+                <DialogTitle>End Session</DialogTitle>
+                <DialogDescription>
+                  Do you want to end the session ?
+                </DialogDescription>
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  onClick={() => {
+                    setIsModalOpen(false);
+                  }}
+                  className={buttonVariants({
+                    size: "lg",
+                    variant: "custom1",
+                    className: "mt-5 rounded-xl",
+                  })}
+                >
+                  Cancel
+                </Button>
+                <Link
+                  href="/result"
+                  className={buttonVariants({
+                    size: "lg",
+                    variant: "default",
+                    className: "mt-5 rounded-xl",
+                  })}
+                >
+                  End
+                </Link>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
+        </section>
+      )}
+    </>
   );
 };
 

@@ -10,6 +10,7 @@ import { Ghost, Loader2, Plus, Trash } from "lucide-react";
 import Skeleton from "react-loading-skeleton";
 import { format } from "date-fns";
 import LineChart from "./LineChart";
+import { useRouter } from "next/navigation";
 
 type InterviewData = {
   id: string;
@@ -25,6 +26,8 @@ const DashboardPage: React.FC = () => {
 
   const [interviews, setInterviews] = useState<InterviewData[] | null>(null);
   const [scoreList, setScoreList] = useState<number[]>([]);
+
+  const router = useRouter();
 
   const fetchInterviews = async () => {
     try {
@@ -62,7 +65,10 @@ const DashboardPage: React.FC = () => {
               key={file.id}
               className="flex flex-col divide-y divide-gray-200 rounded-lg bg-white shadow transition hover:shadow-lg border border-1 border-gray-100"
             >
-              <div className="pt-6 px-6 flex w-full items-center justify-between space-x-6">
+              <div
+                className="pt-6 px-6 flex w-full items-center justify-between space-x-6 cursor-pointer"
+                onClick={() => router.push(`\\result\\${file.id}`)}
+              >
                 <div className="h-10 w-10 flex-shrink-0 rounded-full bg-gradient-to-r from-zinc-200 to-neutral-200" />
                 <div className="flex-1 text-ellipsis overflow-hidden">
                   {/* "text-ellipsis overflow-hidden" is same as "truncate" */}
