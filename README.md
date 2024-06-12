@@ -5,39 +5,68 @@
     </a>
 </p>
 
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+✨ Live demo : [https://cita-official.vercel.app/](https://cita-official.vercel.app)
 
-## Getting Started
+## Introduction
 
-First, run the development server:
+This is a web application designed for practicing interviews, built using Next.js and TypeScript. The client-side interface is styled with Tailwind CSS and Radix UI. Authentication is managed through Kinde Auth. Each user has a personalized dashboard where they can upload their resume and job description for the interview. The interview process is conducted by a human avatar created using Three.js, featuring lip-sync capabilities, Text-to-Speech (TTS), and Speech-to-Text (STT) functionalities. The application integrates the Gemini API for chatbot interactions and utilizes Hugging Face models for personality evaluation and sentence similarity assessment. Prisma is used as the ORM, interfacing with a PostgreSQL database. This repository contains the source code for the entire application.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+## Prerequisites
+
+Before running this project, make sure you have the following software installed on your system:
+
+- Node.js (v20.9.0 or higher)
+- npm (v10.1.0 or higher)
+
+## Get Started
+
+**NB**: All the mentioned steps must be done within the `main` branch only.
+To get started with the app, you will need to clone this repository and install the dependencies. You can do this by running the following commands in your terminal:
+
+```sh
+git clone https://github.com/Asterdev-03/cita.git
+cd cita
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## Setting Environment Variables
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+In `cita` directory, create a file `.env`
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+Add the following in the file.
 
-## Learn More
+```sh
+DATABASE_URL = *******************
+TOKEN=*******************
 
-To learn more about Next.js, take a look at the following resources:
+API_KEY = *******************
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+KINDE_CLIENT_ID=*******************
+KINDE_CLIENT_SECRET=*******************
+KINDE_ISSUER_URL=https://*******************
+KINDE_SITE_URL=http://localhost:3000
+KINDE_POST_LOGOUT_REDIRECT_URL=http://localhost:3000
+KINDE_POST_LOGIN_REDIRECT_URL=http://localhost:3000/dashboard
+```
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
+## Installation
+Install the dependencies by running the following commands in your terminal:
 
-## Deploy on Vercel
+```sh
+pnpm install
+npx prisma generate
+npx prisma db push
+```
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+## Usage
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+Once you have installed the dependencies and set the environment variables, you can run the program by running the following command from the `cita` directory:
+
+```sh
+pnpm run dev
+```
+
+This will start the project and open the app in your default browser. This may take 2-3 minutes.
+
+## License
+
+This project is licensed under the Apache License. See the LICENSE file for details.
