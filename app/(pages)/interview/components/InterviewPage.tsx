@@ -184,11 +184,11 @@ const InterviewPage: React.FC<InterviewPageProps> = ({ user }) => {
   ]);
 
   const displayLoading = () => (
-    <>
-      <Skeleton height={60} className="my-2" count={5} enableAnimation />
+    <div className="text-center">
+      <Skeleton height={60} className="my-2" count={4} enableAnimation />
       <>The Score is Being Evaluated .....</>
-      <Skeleton height={60} className="my-2" count={5} enableAnimation />
-    </>
+      <Skeleton height={60} className="my-2" count={4} enableAnimation />
+    </div>
   );
 
   return (
