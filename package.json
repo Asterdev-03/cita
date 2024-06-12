@@ -41,7 +41,7 @@
     "react-speech-recognition": "^3.10.0",
     "react-webcam": "^7.2.0",
     "regenerator-runtime": "^0.14.1",
-    "sharp": "^0.33.2",
+    "sharp": "^0.33.1",
     "tailwind-merge": "^2.2.1",
     "tailwindcss-animate": "^1.0.7",
     "three": "^0.161.0",
