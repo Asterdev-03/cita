@@ -13,7 +13,7 @@ export async function GET(req: Request) {
       },
     });
 
-    const interviewsData = interviews.map((interview) => {
+    const interviewsData = interviews.map((interview: any) => {
       return {
         id: interview.id,
         name: interview.jobTitle,
