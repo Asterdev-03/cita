@@ -38,17 +38,18 @@ const getAIInputs = async (interviewId: string) => {
   }
 };
 
-const similarityDetectionWithRetry = async (
-  userAns: string,
-  chatbotAns: string
-): Promise<number | undefined> => {
+const similarityDetection = async (userAns: string, chatbotAns: string) => {
   try {
     const data = {
       inputs: {
         source_sentence: chatbotAns,
         sentences: [userAns],
       },
+      options: {
+        wait_for_model: true,
+      },
     };
+
     const response = await fetch(
       "https://api-inference.huggingface.co/models/sentence-transformers/all-mpnet-base-v2",
       {
@@ -64,18 +65,18 @@ const similarityDetectionWithRetry = async (
     return res[0];
   } catch (error) {
     console.log("Similarity Detection Error: ", error);
-    // Retry after 20 seconds
-    await new Promise((resolve) => setTimeout(resolve, 20000)); // 20 seconds delay
-    // Retry the function
-    return similarityDetectionWithRetry(userAns, chatbotAns);
+    return 0;
   }
 };
 
-const personalityDetectionWithRetry = async (
-  userInput: string
-): Promise<any> => {
+const personalityDetection = async (userInput: string) => {
   try {
-    const data = { inputs: userInput };
+    const data = {
+      inputs: userInput,
+      options: {
+        wait_for_model: true,
+      },
+    };
     const response = await fetch(
       "https://api-inference.huggingface.co/models/Minej/bert-base-personality",
       {
@@ -91,25 +92,22 @@ const personalityDetectionWithRetry = async (
     return res;
   } catch (error) {
     console.log("Personality Detection Error: ", error);
-    // Retry after 20 seconds
-    await new Promise((resolve) => setTimeout(resolve, 20000)); // 20 seconds delay
-    // Retry the function
-    return personalityDetectionWithRetry(userInput);
+    return [0, 0, 0, 0, 0];
   }
 };
 
-async function loadModels() {
+/* async function loadModels() {
   console.log("Function execution after 20 seconds.");
   // Call the provided function
-  await personalityDetectionWithRetry("Hello World");
-  await similarityDetectionWithRetry("Hello World", "Hello World");
+  await personalityDetection("Hello World");
+  await similarityDetection("Hello World", "Hello World");
 
   // Wait for 10 seconds using setTimeout
   await new Promise((resolve) => setTimeout(resolve, 10000));
 
   // Close the function after waiting
   console.log("Function execution complete after 20 seconds.");
-}
+} */
 
 export async function POST(req: Request) {
   try {
@@ -161,10 +159,10 @@ export async function POST(req: Request) {
 
     const AIInputs = await getAIInputs(interviewId);
 
-    await loadModels();
+    // await loadModels();
 
     for (let i = 0; i < userInputs.length; i++) {
-      let similarityResult = await similarityDetectionWithRetry(
+      let similarityResult = await similarityDetection(
         userInputs[i],
         AIInputs[i]
       );
@@ -176,9 +174,7 @@ export async function POST(req: Request) {
         similarityScoreList = [...similarityScoreList, 0];
       }
 
-      let personality_score = await personalityDetectionWithRetry(
-        userInputs[i]
-      );
+      let personality_score = await personalityDetection(userInputs[i]);
 
       if (Array.isArray(personality_score)) {
         const [labels] = personality_score;
