@@ -22,7 +22,7 @@ export async function GET(req: Request) {
       };
     });
 
-    console.log("[GET_INTERVIEWS]", interviewsData);
+    // console.log("[GET_INTERVIEWS]", interviewsData);
     return NextResponse.json(interviewsData);
   } catch (error) {
     console.log("[GET_INTERVIEWS_ERROR]", error);
