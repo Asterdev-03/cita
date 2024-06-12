@@ -5,7 +5,7 @@
     </a>
 </p>
 
-✨ Live demo : [https://cita-official.vercel.app/](https://cita-official.vercel.app)
+✨ Live demo : [https://cita-official.vercel.app](https://cita-official.vercel.app)
 
 ## Introduction
 
